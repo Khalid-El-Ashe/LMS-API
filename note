@@ -1,0 +1,122 @@
+in the StudentModelRepository in the line
+        $username = $basename . $genderNumber . ($count + 1); -> // in here maybe found a Production Bug
+                    (if the 2 Student is send the Request Information Register is taken a same end id, But we need the username is uniqed now one of them is a make error)
+
+
+Bugs (XSS ,CSRF ,OWASP)
+
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+
+git rm -r --cached vendor
+git rm -r --cached storage
+git rm --cached .env
+
+
+Services/
+│
+├── CourseService.php
+├── Youtube/
+│   ├── YoutubeService.php
+│   ├── DTO/
+│   │   └── VideoData.php
+│
+└── Sync/
+    └── PlaylistSyncService.php
+
+
+Controller
+   ↓
+CourseService
+   ↓
+YoutubeService (fetch data)
+   ↓
+Mapper / DTO
+   ↓
+Repository
+
+
+Controller → Service → Repository → DB
+                     ↓
+                External APIs (YouTube)
+                     ↓
+                Jobs / Queue
+
+
+
+
+Admin creates course
+        ↓
+Store playlist URL
+        ↓
+Dispatch Job (Fetch Videos)
+        ↓
+YouTube API (Pagination)
+        ↓
+Save in DB
+        ↓
+Cron Job (Auto Sync)
+        ↓
+Update DB
+        ↓
+Student watches videos
+        ↓
+Update progress table
+        ↓
+Frontend API shows everything
+
+
+Controller
+   ↓
+Service (createCourse)
+   ↓
+DB → create course
+   ↓
+Dispatch Job 🔥
+   ↓
+Job:
+   - extract playlist_id
+   - call YoutubeService
+   - save videos
+
+
+[User Create Course]
+    ↓
+Controller
+    ↓
+Service
+    ↓
+DB (course فقط)
+    ↓
+Dispatch Job (Fetch videos)
+
+----------------------
+
+[Auto Sync System]
+    ↓
+Scheduler ⏰
+    ↓
+SyncPlaylistJob
+    ↓
+YoutubeService
+    ↓
+DB (update videos)
+
+
+User Request
+   ↓
+Laravel API (app container)
+   ↓
+Dispatch Job
+   ↓
+Redis Queue
+   ↓
+Queue Worker container
+   ↓
+Database
+
+Scheduler container
+   ↓
+Triggers Jobs automatically

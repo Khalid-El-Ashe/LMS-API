@@ -1,0 +1,47 @@
+[
+    {
+        "nationality": "Palestinian",
+        "countryCode": "+970",
+        "iso": "PS"
+    },
+    {
+        "nationality": "American",
+        "countryCode": "+1",
+        "iso": "US"
+    },
+    {
+        "nationality": "British",
+        "countryCode": "+44",
+        "iso": "GB"
+    },
+    {
+        "nationality": "French",
+        "countryCode": "+33",
+        "iso": "FR"
+    },
+    {
+        "nationality": "German",
+        "countryCode": "+49",
+        "iso": "DE"
+    },
+    {
+        "nationality": "Egyptian",
+        "countryCode": "+20",
+        "iso": "EG"
+    },
+    {
+        "nationality": "Jordanian",
+        "countryCode": "+962",
+        "iso": "JO"
+    },
+    {
+        "nationality": "Saudi",
+        "countryCode": "+966",
+        "iso": "SA"
+    },
+    {
+        "nationality": "Emirati",
+        "countryCode": "+971",
+        "iso": "AE"
+    }
+]

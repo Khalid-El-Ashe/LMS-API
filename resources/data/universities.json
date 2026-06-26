@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1,
+        "un_name": "Al-Quds University",
+        "type": "University"
+    },
+    {
+        "id": 2,
+        "un_name": "An-Najah National University",
+        "type": "University"
+    },
+    {
+        "id": 3,
+        "un_name": "Birzeit University",
+        "type": "University"
+    },
+    {
+        "id": 4,
+        "un_name": "Arab American University",
+        "type": "University"
+    },
+    {
+        "id": 5,
+        "un_name": "Bethlehem University",
+        "type": "University"
+    },
+    {
+        "id": 6,
+        "un_name": "Hebron University",
+        "type": "University"
+    },
+    {
+        "id": 7,
+        "un_name": "Palestine Technical University - Kadoorie",
+        "type": "University"
+    },
+    {
+        "id": 8,
+        "un_name": "Palestine Ahliya University",
+        "type": "University"
+    },
+    {
+        "id": 9,
+        "un_name": "Al-Quds Open University",
+        "type": "University"
+    },
+    {
+        "id": 10,
+        "un_name": "Islamic University of Gaza",
+        "type": "University"
+    },
+    {
+        "id": 11,
+        "un_name": "Al-Azhar University - Gaza",
+        "type": "University"
+    },
+    {
+        "id": 12,
+        "un_name": "Al-Aqsa University",
+        "type": "University"
+    },
+    {
+        "id": 13,
+        "un_name": "University of Palestine",
+        "type": "University"
+    },
+    {
+        "id": 14,
+        "un_name": "University College of Applied Sciences",
+        "type": "College"
+    },
+    {
+        "id": 15,
+        "un_name": "Gaza University",
+        "type": "University"
+    },
+    {
+        "id": 16,
+        "un_name": "Al-Israa University",
+        "type": "University"
+    },
+    {
+        "id": 17,
+        "un_name": "Palestine Technical College - Deir al-Balah",
+        "type": "College"
+    },
+    {
+        "id": 18,
+        "un_name": "Dar Al-Kalima University",
+        "type": "University"
+    }
+]

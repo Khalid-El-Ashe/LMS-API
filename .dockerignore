@@ -1,0 +1,45 @@
+# this file is very important to prevent copying unnecessary files into the Docker image, which can lead to larger image sizes and potential security issues.
+# Git
+.git
+.github
+.gitignore
+
+# Dependencies
+node_modules
+vendor
+
+# Environment
+#.env
+#.env.*
+!.env.example
+
+# Docker
+#docker-compose.yml
+#docker-compose.*.yml
+
+# Storage
+public/storage
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+
+# Cache
+bootstrap/cache
+
+# Docs
+README.md
+*.md
+
+# IDE
+#.idea
+#.vscode
+#.fleet
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+/tests
+phpunit.xml

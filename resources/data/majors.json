@@ -1,0 +1,66 @@
+[
+    {
+        "id": 1,
+        "name": "Computer Science"
+    },
+    {
+        "id": 2,
+        "name": "Computer Engineering"
+    },
+    {
+        "id": 3,
+        "name": "Software Engineering"
+    },
+    {
+        "id": 4,
+        "name": "Information Technology"
+    },
+    {
+        "id": 5,
+        "name": "Information Systems"
+    },
+    {
+        "id": 6,
+        "name": "Management Information Systems"
+    },
+    {
+        "id": 7,
+        "name": "Computer Systems Engineering"
+    },
+    {
+        "id": 8,
+        "name": "Mobile Computing"
+    },
+    {
+        "id": 9,
+        "name": "Smart Systems Engineering"
+    },
+    {
+        "id": 10,
+        "name": "Artificial Intelligence Engineering"
+    },
+    {
+        "id": 11,
+        "name": "Cyber Security"
+    },
+    {
+        "id": 12,
+        "name": "Data Science"
+    },
+    {
+        "id": 13,
+        "name": "Software Development"
+    },
+    {
+        "id": 14,
+        "name": "Network Technology"
+    },
+    {
+        "id": 15,
+        "name": "Applied Information Technology"
+    },
+    {
+        "id": 16,
+        "name": "Multimedia and Web Development"
+    }
+]

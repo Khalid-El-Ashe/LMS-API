@@ -1,0 +1,159 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USING_PASSWORD: "yes"
+      # command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - appnet
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis_cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - appnet
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit_smtp
+    ports:
+      - "8028:8025" # Web UI
+      - "1025:1025" # SMTP
+    networks:
+      - appnet
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    #      args:
+    #        APP_ENV: local # ✅ Development
+    #        APP_ENV: production   # ✅ Production
+    image: areisto_app
+    restart: unless-stopped
+    working_dir: /var/www
+    #    environment:
+    #      USE_NGINX: "true"
+    #      APP_ENV: local
+    #      USE_NGINX: "false"
+    #      APP_ENV: production
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "php-fpm -t && echo ok" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    volumes:
+      - .:/var/www
+    networks:
+      - appnet
+
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: app_nginx
+    restart: unless-stopped
+    ports:
+      - "8027:80"
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - .:/var/www
+    networks:
+      - appnet
+
+  ngrok:
+    image: ngrok/ngrok:alpine
+    container_name: ngrok_tunnel
+    restart: unless-stopped
+    environment:
+      NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+    command: http nginx:80
+    ports:
+      - "4040:4040"  # Web UI لـ ngrok
+    depends_on:
+      - nginx
+    networks:
+      - appnet
+
+
+    # this is the worker that will be responsible for processing the jobs in the queue, we will use the same image as the app but with a different command to run the queue worker, and we will also mount the same volumes to have access to the code and the storage, and we will also set the depends_on to make sure that the app is running before starting the worker, and we will also set the restart policy to unless-stopped to make sure that the worker will be restarted if it fails for any reason
+  queue:
+    image: areisto_app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    #    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90 #[ "/usr/local/bin/scripts/queue.sh" ]
+    command: php artisan queue:work redis --queue=default,progress --verbose
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    user: "www-data:www-data"
+    networks:
+      - appnet
+    restart: unless-stopped
+
+  # this is the scheduler that will be responsible for running the scheduled tasks in the application, we will use the same image as the app but with a different command to run the scheduler, and we will also mount the same volumes to have access to the code and the storage, and we will also set the depends_on to make sure that the app is running before starting the scheduler, and we will also set the restart policy to unless-stopped to make sure that the scheduler will be restarted if it fails for any reason
+  scheduler:
+    image: areisto_app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    command: php artisan schedule:work #[ "/usr/local/bin/scripts/scheduler.sh" ]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - appnet
+    restart: unless-stopped
+
+volumes:
+  dbdata:
+    driver: local
+  storage_data:
+    driver: local
+  cache_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  appnet:
+    driver: bridge
