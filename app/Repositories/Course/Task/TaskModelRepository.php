@@ -12,6 +12,8 @@ class TaskModelRepository implements TaskRepository
 
     public function create(array $data, Mentor $mentor)
     {
+//        $mentor = auth()->guard('mentor')->user();
+
         $video = CourseVideo::query()->findOrFail(
             $data['video_id']
         );
@@ -25,7 +27,7 @@ class TaskModelRepository implements TaskRepository
         $data['order'] = Task::query()->where('video_id', $data['video_id'])
                 ->max('order') + 1;
 
-        return Task::query()->createOrFirst($data);
+        return Task::query()->create($data);
     }
 
     public function getByCourse(int $courseId)
@@ -39,6 +41,30 @@ class TaskModelRepository implements TaskRepository
     public function getByVideo(int $videoId)
     {
         return Task::query()->where('video_id', $videoId)->orderBy('tasks.order')->get();
+    }
+
+    public function totalTasks(Mentor $mentor)
+    {
+
+        return Task::query()
+            ->whereHas('course.mentors', fn($q) => $q->where('mentors.id', $mentor->id))->count();
+    }
+
+    public function taskShowInList(Mentor $mentor)
+    {
+        return Task::query()->select([
+            'tasks.title',
+            'tasks.video_id',
+            'tasks.dead_line'
+        ])
+            ->whereHas('course.mentors', fn($q) => $q->where('mentors.id', $mentor->id))
+            ->with('video:id,title')->orderBy('tasks.order', 'desc')->get()->map(function ($task) {
+                return [
+                    'title' => $task->title,
+                    'video_title' => $task->video?->title,
+                    'dead_line' => $task->dead_line,
+                ];
+            });
     }
 
     public function update(int $id, array $data)

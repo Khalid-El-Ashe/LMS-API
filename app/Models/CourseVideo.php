@@ -35,6 +35,15 @@ class CourseVideo extends Model
         'order' => 0,
     ];
 
+    public static function belongsToMentor(Builder $query, $mentorId)
+    {
+        return $query->whereHas('course', function ($q) use ($mentorId) {
+            $q->whereHas('mentors', function ($q2) use ($mentorId) {
+                $q2->where('mentor_id', $mentorId);
+            });
+        });
+    }
+
     public function course()
     {
         return $this->belongsTo(Course::class);

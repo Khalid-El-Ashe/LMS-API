@@ -29,8 +29,8 @@ class MentorController extends Controller
     public function register(MentorRequest $request)
     {
         try {
-            $this->repository->registerMentor($request->validated());
-            return $this->success(null, 'Mentor registered successfully', 201);
+            $data = $this->repository->registerMentor($request->validated());
+            return $this->success($data, 'Mentor registered successfully', 201);
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
         }
@@ -40,8 +40,8 @@ class MentorController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $token = $this->repository->loginMentor($request->validated());
-            return $this->success($token);
+            $mentor = $this->repository->loginMentor($request->validated());
+            return $this->success(data: $mentor);
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
         }
@@ -68,12 +68,24 @@ class MentorController extends Controller
         }
     }
 
+    public function mentorDashboard(Mentor $mentor)
+    {
+        $mentor = auth()->guard('mentor')->user();
+        try {
+            $dashboardData = $this->repository->mentorDashboard($mentor);
+            return $this->success(data: $dashboardData);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
     /**
      * Summary of enableAccount
      * Can the Admin Enable Mentor Account
      */
     public function enableAccount(Mentor $mentor)
     {
+
         try {
             // Implement the logic to enable a mentor account
             // You can use the repository method to enable the mentor account

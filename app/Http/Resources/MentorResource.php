@@ -15,15 +15,13 @@ class MentorResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $mentor = $this;
+
         return [
-            'full_name' => $this->full_name,
-            'university_name' => $this->university_name,
-            'university_major' => $this->university_major,
-            'mobile_number' => $this->mobile_number,
-            'teacher_collage' => $this->teacher_collage,
-            'gender' => $this->gender,
-            'username' => $this->username,
-            'courses' => CourseResource::collection($this->whenLoaded('courses')),
+            'name' => $mentor->name,
+            'email' => $mentor->email,
+            'username' => $mentor->username,
+            'courses' => CourseResource::collection($mentor->whenLoaded('courses')),
         ];
 
     }

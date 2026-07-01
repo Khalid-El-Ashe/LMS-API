@@ -8,6 +8,7 @@ use App\Http\Resources\Course\CourseCommentsResource;
 use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
 use App\Models\CourseVideo;
+use App\Models\Mentor;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
@@ -64,6 +65,24 @@ class CourseModelRepository implements CourseRepository
             return new CourseResource($course);
         });
         //        return Course::with('videos')->with('links')->with('comments')->findOrFail($course->id);
+    }
+
+    public function getAllVideosForCourseMentor(Mentor $mentor)
+    {
+        # get All videos for this course is mentor have
+        return CourseVideo::query()
+            ->select([
+                'id',
+                'title'
+            ])
+            ->whereHas('course.mentors', function ($query) use ($mentor) {
+                $query->where('mentors.id', $mentor->id);
+            })->orderBy('order', 'asc')->get()->map(function ($video) {
+                return [
+                    'id' => $video->id,
+                    'video_title' => $video->title,
+                ];
+            });
     }
 
     public function getVideoDetails(CourseVideo $video): CourseVideo

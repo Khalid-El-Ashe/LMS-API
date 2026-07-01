@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReviewTaskRequest;
 use App\Http\Requests\SubmitTaskRequest;
 use App\Http\Requests\TaskRequest;
-use App\Models\CourseVideo;
+use App\Models\Mentor;
 use App\Models\Task;
 use App\Models\TaskSubmission;
 use App\Repositories\Course\Task\TaskRepository;
@@ -23,14 +24,14 @@ class TaskController extends Controller
     {
         try {
 
-            $mentor = auth()->guard('mentor')->user();
             $data = $request->validated();
-
-            $task = $this->taskRepo->create($data, $mentor);
+            $mentor = auth()->guard('mentor')->user();
+            $task = $this->taskRepo->create(data: $data, mentor: $mentor);
 
             return $this->success($task, 'Task created successfully', 201);
         } catch (Throwable $th) {
-            return $this->error($th->getMessage());
+            $statusCode = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
+            return $this->error($th->getMessage(), $statusCode);
         }
     }
 
@@ -40,8 +41,22 @@ class TaskController extends Controller
             $submission = $this->submissionService->submit($task->id, auth()->guard('student')->id(), $request->validated());
             return $this->success($submission, 'Task submitted successfully', 200);
         } catch (Throwable $th) {
-            return $this->error($th->getMessage());
+            $statusCode = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
+            return $this->error($th->getMessage(), $statusCode);
         }
+    }
+
+    public function reviewTask(ReviewTaskRequest $request, TaskSubmission $submission)
+    {
+        $mentor = auth()->guard('mentor')->user();
+        try {
+            $reviewedSubmission = $this->submissionService->review($submission, $mentor, $request->validated());
+            return $this->success($reviewedSubmission, 'Task reviewed successfully', 200);
+        } catch (Throwable $th) {
+            $statusCode = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
+            return $this->error($th->getMessage(), $statusCode);
+        }
+
     }
 
     public function getSubmissions(Task $task)
@@ -64,23 +79,37 @@ class TaskController extends Controller
         }
     }
 
-    public function approveSubmission(TaskRequest $request, TaskSubmission $submission)
+//    public function approveSubmission(TaskRequest $request, TaskSubmission $submission)
+//    {
+//        try {
+//            $approvedSubmission = $this->submissionService->approve($submission, auth()->guard('mentor')->id(), $request->input('grade'), $request->input('note'));
+//            return $this->success($approvedSubmission, 'Submission approved successfully', 200);
+//        } catch (Throwable $th) {
+//            return $this->error($th->getMessage());
+//        }
+//    }
+
+//    public function rejectSubmission(Request $request, TaskSubmission $submission)
+//    {
+//        try {
+//            $rejectedSubmission = $this->submissionService->reject($submission, auth()->guard('mentor')->id(), $request->input('notes'));
+//            return $this->success($rejectedSubmission, 'Submission rejected successfully', 200);
+//        } catch (Throwable $th) {
+//            return $this->error($th->getMessage());
+//        }
+//    }
+
+    public function totalTasks()
     {
-        try {
-            $approvedSubmission = $this->submissionService->approve($submission, auth()->guard('mentor')->id(), $request->input('grade'), $request->input('note'));
-            return $this->success($approvedSubmission, 'Submission approved successfully', 200);
-        } catch (Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $mentor = auth()->guard('mentor')->user();
+        $total = $this->taskRepo->totalTasks($mentor);
+        return $this->success(['total' => $total], null, 200);
     }
 
-    public function rejectSubmission(Request $request, TaskSubmission $submission)
+    public function taskShowInList()
     {
-        try {
-            $rejectedSubmission = $this->submissionService->reject($submission, auth()->guard('mentor')->id(), $request->input('notes'));
-            return $this->success($rejectedSubmission, 'Submission rejected successfully', 200);
-        } catch (Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $mentor = auth()->guard('mentor')->user();
+        $tasks = $this->taskRepo->taskShowInList($mentor);
+        return $this->success($tasks, null, 200);
     }
 }

@@ -60,6 +60,17 @@ class CourseController extends Controller
         }
     }
 
+    public function getAllVideosForCourseMentor()
+    {
+        $mentor = auth()->guard('mentor')->user();
+        try {
+            $videos = $this->courseRepo->getAllVideosForCourseMentor($mentor);
+            return $this->success(data: $videos, code: ResponseAlias::HTTP_OK);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
     public function getVideoDetails(CourseVideo $courseVideo)
     {
         try {

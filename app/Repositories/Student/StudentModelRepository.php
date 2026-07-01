@@ -85,7 +85,13 @@ class StudentModelRepository implements StudentRepository
         }
 
         $student->notify(new WelcomeMessage()); // email student
-        return new StudentResource($student->load('courses'));
+//        return new StudentResource($student->load('courses'));
+        return [
+            'full_name' => $student->full_name,
+            'username' => $student->username,
+            'slug' => $student->slug,
+            'role' => 'student',
+        ];
     }
 
     public function login(array $data)
@@ -158,13 +164,6 @@ class StudentModelRepository implements StudentRepository
     # this function for student to get his info
     public function getStudentProfile()
     {
-        # in here need to get the student info
-        # to make it (Insecure Direct Object Reference (IDOR)) Security
-//        if (auth()->id() !== $student->id) {
-//            return $this->error(__('message.unauthorized'), 403);
-//        }
-        //        return new StudentToAdminResource($student->load('courses')); // Eager Loading;
-//        return new StudentDashboardResource($student); // Eager Loading
         return auth()->guard('student')->user()
             ->load([
                 'courses.videos.tasks',

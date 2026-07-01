@@ -25,7 +25,7 @@ class TaskRequest extends BaseApiRequest
     {
         return [
 //            'course_id' => ['required', 'exists:courses,id'],
-            'video_id' => ['nullable', 'exists:course_videos,id'],
+            'video_id' => ['required', 'exists:course_videos,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'dead_line' => ['nullable', 'date'],

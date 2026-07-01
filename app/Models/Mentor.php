@@ -28,14 +28,14 @@ class Mentor extends Authenticatable
         'city',
         'state',
         'experience',
-        'nationality',
+//        'nationality',
         'status',
         'files',
         'is_active',
         'last_active_at'
     ];
 
-    protected string $guard_name = 'mentor';
+    protected $guard_name = 'mentor';
 
 
     protected $casts = [

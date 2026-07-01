@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaskSubmission extends Model
@@ -12,7 +13,7 @@ class TaskSubmission extends Model
         'task_id',
         'student_id',
         'file',
-        'status',
+//        'status',
         'grade',
         'answer',
         'reviewed_at',
@@ -40,13 +41,19 @@ class TaskSubmission extends Model
         return $this->belongsTo(Mentor::class, 'reviewed_by');
     }
 
+    # need make a helper to tell is have a review or not
     public function isReviewed()
     {
-        return $this->status === 'approved';
+        return !is_null($this->reviewed_by);
     }
 
-    public function isRejected()
-    {
-        return $this->status === 'rejected';
-    }
+//    public function isReviewed()
+//    {
+//        return $this->status === 'approved';
+//    }
+
+//    public function isRejected()
+//    {
+//        return $this->status === 'rejected';
+//    }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
 
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+//            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->integer('grade')->nullable();
             $table->text('answer')->nullable();

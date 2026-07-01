@@ -5,6 +5,9 @@ namespace App\Repositories\Mentor;
 use App\Http\Resources\MentorResource;
 use App\Models\Admin;
 use App\Models\Mentor;
+use App\Models\Student;
+use App\Models\Task;
+use App\Models\TaskSubmission;
 use App\Notifications\NotifyNewStudent;
 use App\Notifications\WelcomeMessage;
 use App\Services\CountryService;
@@ -29,9 +32,7 @@ class MentorModelRepository implements MentorRepository
         $this->fileUploadService = $fileUploadService;
     }
 
-    /**
-     * @throws RandomException
-     */
+
     public function registerMentor(array $data)
     {
         // generate the username
@@ -39,7 +40,7 @@ class MentorModelRepository implements MentorRepository
         $uniqueNum = Str::random(5);
         $data['username'] = $basename . "$" . $uniqueNum;
 
-        $country = CountryService::getCodeByIso($data['country_iso']);
+        $country = CountryService::getCodeByIso($data['country_iso'] ?? null);
         $data['code_mobile'] = $country['countryCode'] ?? null;
 
         $mobile = ltrim($data['mobile_number'], '0');
@@ -48,7 +49,7 @@ class MentorModelRepository implements MentorRepository
         $mentor = Mentor::query()->create($data);
 
         // now I need to check if the course_id is sent in the request or not if sent, I will attach the student to the course
-        if (!empty($data['course_id'])) {
+        if (!empty($data['course_id']) && is_array($data['course_id'])) {
             $mentor->courses()->syncWithoutDetaching($data['course_id']);
         }
 
@@ -60,7 +61,13 @@ class MentorModelRepository implements MentorRepository
 
         $mentor->notify(new WelcomeMessage()); // send email to mentor
         $mentor->assignRole('mentor');
-        return new MentorResource($mentor->load('courses'));
+
+        return [
+            'slug' => $mentor->slug,
+            'name' => $mentor->name,
+            'username' => $mentor->username,
+            'id' => $mentor->id,
+        ];
     }
 
     public function loginMentor(array $data)
@@ -88,47 +95,88 @@ class MentorModelRepository implements MentorRepository
             'ip' => request()->ip(),
             'last_activity' => now(),
         ]);
-
-//        $mentor->tokens()->delete();
-        // if all checks is success (true) make a token by sanctom
-//        $token = $mentor->createToken('mentor_token' . '-' . $mentor->id, expiresAt: \Illuminate\Support\now()->addDays(7))->plainTextToken;
         $permissions = $mentor->getAllPermissions()->pluck('name');
 
         return [
-//            'token' => $token,
             'user' => [
                 'slug' => $mentor->slug,
                 'name' => $mentor->name,
+                'course_name' => $mentor->courses()->pluck('name'),
                 'role' => 'mentor',
             ],
-            'permissions' => $permissions
+//            'permissions' => $permissions
         ];
     }
 
     public function mentorInformation(Mentor $mentor)
     {
-//        if (auth()->id() !== $mentor->id) {
-//            return $this->error('Unauthorized access to mentor info', 403);
-//        }
+        # in here need get the information mentor by:
+        # 1- authentication by user()->id
         return new MentorResource($mentor->load('courses'));
+    }
+
+    public function mentorDashboard(Mentor $mentor)
+    {
+
+        $courses = $mentor->courses()
+            ->select('courses.id', 'courses.name')
+            ->get();
+
+//        $studentCount = $mentor->courses()->count();
+        $studentCount = Student::query()
+            ->whereHas('courses.mentors', function ($query) use ($mentor) {
+                $query->where('mentor_id', $mentor->id);
+            })
+            ->count();
+
+        // get last task by order
+//        $lastTask = Task::query()
+//            ->whereHas('course.mentors', function ($query) use ($mentor) {
+//                $query->where('mentors.id', $mentor->id);
+//            })
+//            ->orderByDesc('order')
+//            ->first();
+
+
+        $lastSubmissions = TaskSubmission::query()
+            ->whereHas('task.course.mentors', function ($query) use ($mentor) {
+                $query->where('mentors.id', $mentor->id);
+            })
+            ->with([
+                'student:id,full_name',
+                'task:id,title'
+            ])
+            ->latest()
+            ->limit(3)
+            ->get()
+            ->map(function ($submission) {
+                return [
+                    'student_name' => $submission->student?->full_name,
+                    'task_title' => $submission->task?->title,
+                    'submitted_at' => $submission->created_at->format('Y-m-d H:i:s'),
+                ];
+            });
+
+        return [
+            'name' => $mentor->name,
+            'email' => $mentor->email,
+            'course_name' => $courses->pluck('name')->values(), # $mentor->courses()->pluck('name'),
+            'student_count' => $studentCount ?? 0,
+            'last_task_submissions_count' => $lastSubmissions,
+        ];
     }
 
     public function logoutMentor(): true|JsonResponse
     {
-//        $user = auth('mentor')->user();
-
         $mentor = Auth::guard('mentor')->user();
         if (!$mentor) {
             return $this->error('User not authenticated', 401);
         }
 
-        // Delete the current access token directly
-//        $user->currentAccessToken()?->delete();
 //        Cache::forget('mentor_token_' . $user->id);
-        Auth::guard('student')->logout();
+        Auth::guard('mentor')->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
-//        return true;
         return true;
     }
 

@@ -6,6 +6,7 @@ use App\Http\Requests\CourseRequest;
 use App\Models\Comment;
 use App\Models\Course;
 use App\Models\CourseVideo;
+use App\Models\Mentor;
 
 interface CourseRepository
 {
@@ -14,6 +15,7 @@ interface CourseRepository
     public function getCourse(Course $course);
     public function getVideoDetails(CourseVideo $video);
     public function getVideoComments(CourseVideo $courseVideo);
+    public function getAllVideosForCourseMentor(Mentor $mentor);
     public function getCourseStudents(Course $course);
     public function getCourseMentors(Course $course);
     public function createCourse(array $data);

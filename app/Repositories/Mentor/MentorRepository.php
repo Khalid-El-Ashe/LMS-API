@@ -16,6 +16,7 @@ interface MentorRepository
 
     public function logoutMentor();
     public function mentorInformation(Mentor $mentor);
+    public function mentorDashboard(Mentor $mentor);
     public function enableMentor(Mentor $mentor): bool;
 
     public function disableMentor(Mentor $mentor): bool;
