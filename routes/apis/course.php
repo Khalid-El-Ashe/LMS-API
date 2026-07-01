@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('course')->group(function () {
-    Route::get('/', [CourseController::class, 'getAllCourses']);
+    Route::get('list', [CourseController::class, 'getAllCourses']);
     Route::get('/{course}', [CourseController::class, 'getCourse']);
     Route::post('/create', [CourseController::class, 'createCourse'])->middleware(['auth:admin', 'can:create-course']);
 

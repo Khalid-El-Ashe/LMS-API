@@ -2,11 +2,10 @@
 
 namespace App\Repositories\Mentor;
 
-use App\Http\Resources\MentorResource;
+use App\Http\Resources\Mentor\MentorResource;
 use App\Models\Admin;
 use App\Models\Mentor;
 use App\Models\Student;
-use App\Models\Task;
 use App\Models\TaskSubmission;
 use App\Notifications\NotifyNewStudent;
 use App\Notifications\WelcomeMessage;
@@ -15,12 +14,10 @@ use App\Services\FileUploadService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Random\RandomException;
 use function request;
 
 class MentorModelRepository implements MentorRepository
@@ -29,7 +26,6 @@ class MentorModelRepository implements MentorRepository
 
     public function __construct(private FileUploadService $fileUploadService)
     {
-        $this->fileUploadService = $fileUploadService;
     }
 
 
@@ -45,6 +41,10 @@ class MentorModelRepository implements MentorRepository
 
         $mobile = ltrim($data['mobile_number'], '0');
         $data['mobile_number'] = $mobile;
+
+        $state = CountryService::getStatesByCode($data['state_code'] ?? null);
+        $data['state'] = $state['name'];
+        unset($data['state_code']);
 
         $mentor = Mentor::query()->create($data);
 
@@ -108,62 +108,72 @@ class MentorModelRepository implements MentorRepository
         ];
     }
 
-    public function mentorInformation(Mentor $mentor)
+
+    public function updateInformation(Mentor $mentor, array $data)
     {
-        # in here need get the information mentor by:
-        # 1- authentication by user()->id
-        return new MentorResource($mentor->load('courses'));
+        $mentor->update($data);
+        return $mentor->fresh();
     }
 
     public function mentorDashboard(Mentor $mentor)
     {
 
-        $courses = $mentor->courses()
-            ->select('courses.id', 'courses.name')
-            ->get();
+        $mentor->load(['courses:id,name,description']);
 
 //        $studentCount = $mentor->courses()->count();
-        $studentCount = Student::query()
+        $mentor->student_count = Student::query()
             ->whereHas('courses.mentors', function ($query) use ($mentor) {
-                $query->where('mentor_id', $mentor->id);
+                $query->where('mentors.id', $mentor->id);
             })
             ->count();
 
-        // get last task by order
-//        $lastTask = Task::query()
-//            ->whereHas('course.mentors', function ($query) use ($mentor) {
-//                $query->where('mentors.id', $mentor->id);
-//            })
-//            ->orderByDesc('order')
-//            ->first();
+        $mentor->course_video_count = $mentor->courses()
+            ->withCount('videos')
+            ->get()
+            ->sum('videos_count');
 
-
-        $lastSubmissions = TaskSubmission::query()
+        $mentor->last_submissions = TaskSubmission::query()
             ->whereHas('task.course.mentors', function ($query) use ($mentor) {
                 $query->where('mentors.id', $mentor->id);
             })
             ->with([
                 'student:id,full_name',
-                'task:id,title'
+                'task:id,title',
             ])
             ->latest()
             ->limit(3)
-            ->get()
-            ->map(function ($submission) {
-                return [
-                    'student_name' => $submission->student?->full_name,
-                    'task_title' => $submission->task?->title,
-                    'submitted_at' => $submission->created_at->format('Y-m-d H:i:s'),
-                ];
-            });
+            ->get();
 
-        return [
-            'name' => $mentor->name,
-            'email' => $mentor->email,
-            'course_name' => $courses->pluck('name')->values(), # $mentor->courses()->pluck('name'),
-            'student_count' => $studentCount ?? 0,
-            'last_task_submissions_count' => $lastSubmissions,
-        ];
+//        $lastSubmissions = TaskSubmission::query()
+//            ->whereHas('task.course.mentors', function ($query) use ($mentor) {
+//                $query->where('mentors.id', $mentor->id);
+//            })
+//            ->with([
+//                'student:id,full_name',
+//                'task:id,title'
+//            ])
+//            ->latest()
+//            ->limit(3)
+//            ->get()
+//            ->map(function ($submission) {
+//                return [
+//                    'student_name' => $submission->student?->full_name,
+//                    'task_title' => $submission->task?->title,
+//                    'submitted_at' => $submission->created_at->format('Y-m-d H:i:s'),
+//                ];
+//            });
+
+        return $mentor;
+//        return [
+//            'name' => $mentor->name,
+//            'email' => $mentor->email,
+//            'profile_image' => asset('storage/' . $mentor->profile_image) ?? null,
+//            'course_name' => $courses->pluck('name')->values(), # $mentor->courses()->pluck('name'),
+//            'student_count' => $studentCount ?? 0,
+//            'course_video_count' => $videoCount ?? 0,
+//            'last_submissions' => $lastSubmissions ?? null,
+//            'last_task_submissions_count' => $lastSubmissions->count(),
+//        ];
     }
 
     public function logoutMentor(): true|JsonResponse
@@ -210,7 +220,7 @@ class MentorModelRepository implements MentorRepository
 
         $path = $this->fileUploadService->upload($image, 'mentors/profile-image');
         $mentor->update(['profile_image' => $path]);
-        return $path;
+        return asset('storage/' . $path);
     }
 
     /**
@@ -225,16 +235,5 @@ class MentorModelRepository implements MentorRepository
         $mentor->update(['files' => array_merge($oldFiles, $paths)]);
         return $paths;
     }
-
-//    public function sendEmailForAllStudents()
-//    {
-//        // Implementation for sending email to all students
-//    }
-//
-//    public function sendEmailForStudent()
-//    {
-//        // Implementation for sending email to a specific student
-//    }
-
 
 }

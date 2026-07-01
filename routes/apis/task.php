@@ -9,7 +9,7 @@ Route::prefix('tasks')->group(function () {
     Route::post('/{task}/submit', [TaskController::class, 'submitTask'])->middleware(['auth:student']); // يجاوب
     Route::patch('/submissions/{submission}/review', [TaskController::class, 'reviewTask'])->middleware(['auth:mentor']);
 
-    Route::get('/submissions/pending', [TaskController::class, 'getPendingSubmissions']); #->middleware('can:get-task-pending');         // إجابات طلابه
+    Route::get('/submissions', [TaskController::class, 'getTaskSubmissions'])->middleware(['auth:mentor']); #->middleware('can:get-task-pending');         // إجابات طلابه
     Route::get('/{task}/submissions', [TaskController::class, 'getSubmissions']); #->middleware('can:get-task-submissions');         // إجابات Task معين
 
 //    Route::patch('/submissions/{submission}/approve', [TaskController::class, 'approveSubmission'])->middleware('can:task-approve'); // يعتمد

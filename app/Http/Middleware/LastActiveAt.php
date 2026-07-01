@@ -36,8 +36,10 @@ class LastActiveAt
             // Update the last active timestamp
             $user->forceFill(['last_active_at' => Carbon::now()])->save();
         } elseif ($user instanceof Admin) {
+
             $user->forceFill(['last_active_at' => Carbon::now()])->save();
         }
+
         return $next($request);
     }
 }

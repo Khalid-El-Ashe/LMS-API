@@ -15,7 +15,7 @@ interface MentorRepository
     public function loginMentor(array $data);
 
     public function logoutMentor();
-    public function mentorInformation(Mentor $mentor);
+    public function updateInformation(Mentor $mentor, array $data);
     public function mentorDashboard(Mentor $mentor);
     public function enableMentor(Mentor $mentor): bool;
 

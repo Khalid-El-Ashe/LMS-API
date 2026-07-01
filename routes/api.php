@@ -13,3 +13,4 @@ require __DIR__ . '/apis/task.php';
 Route::get('/code-number', [CountryCodeController::class, 'index']);
 Route::get('/university-list', [Controller::class, 'universityList']);
 Route::get('/major-list', [Controller::class, 'majorList']);
+Route::get('/states-list', [CountryCodeController::class, 'statesList']);

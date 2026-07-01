@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Mentor;
 
 use App\Http\Resources\Course\CourseResource;
 use Illuminate\Http\Request;

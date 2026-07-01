@@ -32,7 +32,6 @@ class ProfileImageRequest extends BaseApiRequest
         return [
             'profile_image.required' => 'Profile Image is required.',
             'profile_image.image' => 'Profile Image must be an image.',
-
         ];
     }
 }

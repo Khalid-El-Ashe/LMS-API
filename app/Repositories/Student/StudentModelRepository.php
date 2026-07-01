@@ -4,11 +4,11 @@ namespace App\Repositories\Student;
 
 use App\Http\Resources\Student\StudentResource;
 use App\Models\Admin;
+use App\Models\Mentor;
 use App\Models\Student;
 use App\Notifications\NotifyNewStudent;
 use App\Notifications\WelcomeMessage;
 use App\Services\CountryService;
-use App\Services\CourseProgressService;
 use App\Services\FileUploadService;
 use App\Services\MajorService;
 use App\Services\UniversityService;
@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use function PHPUnit\Framework\throwException;
 
 class StudentModelRepository implements StudentRepository
 {
@@ -41,12 +42,26 @@ class StudentModelRepository implements StudentRepository
         ]);
     }
 
+    public function getAllStudentsForMentor(Mentor $mentor)
+    {
+        return Student::query()->with('courses:id,name')->whereHas('courses.mentors', function ($query) use ($mentor) {
+            $query->where('mentors.id', $mentor->id);
+        })->latest()
+            ->paginate(10)->through(fn($student) => [
+                'full_name' => $student->full_name,
+                'email' => $student->email,
+                'profil e_photo' => asset('storage/' . $student->profile_image) ?? null,
+                'courses' => $student->courses->pluck('name')->values(),
+            ]);
+    }
+
     public function getAllStudentsIsTrashed()
     {
         $students = Student::onlyTrashed()->with('courses')->latest()->paginate(10); // Eger Loading
         return $students->map(fn($student) => [
             'full_name' => $student->full_name,
             'email' => $student->email,
+            'profile_photo' => asset('storage/' . $student->profile_image) ?? null,
             'courses' => $student->courses->pluck('name'),
         ]);
     }
@@ -101,14 +116,14 @@ class StudentModelRepository implements StudentRepository
 
         if (!$student) {
             throw ValidationException::withMessages([
-                'username' => [__('auth.invalid_credentials')],
+                'username' => ['Invalid credentials'],
             ]);
         }
 
         // now I need to check if the account is Active or not
         if (!$student->is_active) {
             throw ValidationException::withMessages([
-                'account' => [__('auth.account_is_inactive')]
+                'account' => ['Account is inactive']
             ]);
         }
 
@@ -142,7 +157,9 @@ class StudentModelRepository implements StudentRepository
         $student = Auth::guard('student')->user();
 
         if (!$student) {
-            return $this->error(__('message.not_authenticated'), 401);
+            return throw ValidationException::withMessages([
+                'user' => ['User not authenticated'],
+            ]);
         }
 
         // Delete the current access token directly
@@ -156,7 +173,7 @@ class StudentModelRepository implements StudentRepository
 
     public function updateStudentData(Student $student, array $data)
     {
-        $student = Student::query()->findOrFail($data['student_id']);
+//        $student = Student::query()->findOrFail($data['student_id']);
         $student->update($data);
         return $student->fresh();
     }
@@ -252,7 +269,7 @@ class StudentModelRepository implements StudentRepository
 
         $path = $this->fileUploadService->upload($image, 'students/profile-image');
         $student->update(['profile_image' => $path]);
-        return $path;
+        return asset('storage/' . $path);
     }
 
     /**
