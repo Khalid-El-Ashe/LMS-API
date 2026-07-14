@@ -92,7 +92,9 @@ class StudentDashboardResource extends JsonResource
                 'email' => $student->email,
                 'mobile_number' => $student->code_mobile . $student->mobile_number,
                 'gender' => $student->gender,
-                'profile_photo' => $student->profile_image
+                'profile_photo' => asset('storage/' . $student->profile_image) ?? null,
+                'university_name' => $student->university_name,
+                'university_major' => $student->university_major
             ],
 
             'course' => [

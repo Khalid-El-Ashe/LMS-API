@@ -1,5 +1,4 @@
 services:
-
   mysql:
     image: mysql:8.0
     container_name: mysql_database
@@ -19,7 +18,7 @@ services:
     networks:
       - appnet
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       retries: 5
 
@@ -34,7 +33,7 @@ services:
     networks:
       - appnet
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -69,7 +68,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "php-fpm -t && echo ok" ]
+      test: ["CMD-SHELL", "php-fpm -t && echo ok"]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -103,12 +102,11 @@ services:
       NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
     command: http nginx:80
     ports:
-      - "4040:4040"  # Web UI لـ ngrok
+      - "4500:4040" # Web UI لـ ngrok
     depends_on:
       - nginx
     networks:
       - appnet
-
 
     # this is the worker that will be responsible for processing the jobs in the queue, we will use the same image as the app but with a different command to run the queue worker, and we will also mount the same volumes to have access to the code and the storage, and we will also set the depends_on to make sure that the app is running before starting the worker, and we will also set the restart policy to unless-stopped to make sure that the worker will be restarted if it fails for any reason
   queue:

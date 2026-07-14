@@ -110,9 +110,22 @@ class StudentController extends Controller
         }
     }
 
-    public function updateStudentData(Student $student, Request $request)
+    public function getAllStudentsForMentor()
     {
         try {
+            $mentor = auth()->guard('mentor')->user();
+            $students = $this->studentRepository->getAllStudentsForMentor($mentor);
+            return $this->success(data: $students, code: ResponseAlias::HTTP_OK);
+        } catch (Exception $th) {
+            $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
+            return $this->error('An error occurred while retrieving students for the mentor\n' . $th->getMessage(), $status);
+        }
+    }
+
+    public function updateStudentData(Request $request)
+    {
+        try {
+            $student = auth()->guard('student')->user();
             $updatedStudent = $this->studentRepository->updateStudentData($student, $request->all());
             return $this->success($updatedStudent, __('message.student_info_updated_successfully'), ResponseAlias::HTTP_OK);
         } catch (Exception $th) {
@@ -125,7 +138,7 @@ class StudentController extends Controller
     {
         try {
             $this->studentRepository->deleteStudent($student);
-            return $this->success('', "Success Deleted Account: $student->name / Student");
+            return $this->success('', "Success Deleted Account: $student->full_name / Student");
         } catch (Exception $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
             return $this->error('An error occurred while deleting the student\n' . $th->getMessage(), $status);
@@ -210,9 +223,10 @@ class StudentController extends Controller
         }
     }
 
-    public function uploadProfileImage(ProfileImageRequest $request, Student $student)
+    public function uploadProfileImage(ProfileImageRequest $request)
     {
         try {
+            $student = auth()->guard('student')->user();
             $imageUrl = $this->studentRepository->uploadProfileImage($student, $request->file('profile_image'));
             return $this->success($imageUrl, 'Profile image uploaded successfully');
         } catch (Exception $th) {

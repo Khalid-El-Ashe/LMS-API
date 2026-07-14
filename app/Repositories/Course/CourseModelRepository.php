@@ -81,6 +81,8 @@ class CourseModelRepository implements CourseRepository
                 return [
                     'id' => $video->id,
                     'video_title' => $video->title,
+                    'video_duration' => $video->duration,
+                    'created_at' => $video->created_at,
                 ];
             });
     }

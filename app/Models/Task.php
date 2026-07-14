@@ -66,7 +66,7 @@ class Task extends Model
     {
         return $this->submissions()
             ->where('student_id', $studentId)
-            ->where('status', 'approved')
+//            ->where('status', 'approved')
             ->exists();
     }
 

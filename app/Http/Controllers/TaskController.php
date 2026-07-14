@@ -69,7 +69,7 @@ class TaskController extends Controller
         }
     }
 
-    public function getPendingSubmissions()
+    public function getTaskSubmissions()
     {
         try {
             $submissions = $this->taskRepo->getStudentSubmissions(auth()->guard('mentor')->id());

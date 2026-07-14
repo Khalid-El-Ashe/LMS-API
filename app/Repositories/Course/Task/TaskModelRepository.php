@@ -81,15 +81,41 @@ class TaskModelRepository implements TaskRepository
 
     public function getSubmissions(int $taskId)
     {
-        return TaskSubmission::query()->where('task_id', $taskId)->with('student', 'reviewer')->latest()->get();
+        return TaskSubmission::query()
+            ->select([
+                'id',
+                'student_id',
+                'answer',
+                'file',
+                'grade',
+                'reviewed_by',
+                'reviewed_at',
+                'created_at',
+            ])
+            ->where('task_id', $taskId)->with('student:id,full_name,profile_image', 'reviewer:id,name')->latest()->get();
     }
 
     public function getStudentSubmissions(int $mentorId)
     {
-        return TaskSubmission::query()->whereHas('task.course.mentors', function ($query) use ($mentorId) {
-            $query->where('mentor_id', $mentorId);
-        })
-            ->with('student', 'task', 'reviewer')->where('task_submissions.status', 'pending')
+        return TaskSubmission::query()
+            ->select([
+                'id',
+                'task_id',
+                'student_id',
+                'grade',
+                'reviewed_by',
+                'created_at'
+            ])
+            ->whereHas('task.course.mentors', function ($query) use ($mentorId) {
+                $query->where('mentor_id', $mentorId);
+            })
+            ->with('student', 'task', 'reviewer')
+//            ->where('task_submissions.status', 'pending')
+            ->with([
+                'student:id,full_name',
+                'task:id,title',
+                'reviewer:id,name'
+            ])
             ->latest()->get();
     }
 }

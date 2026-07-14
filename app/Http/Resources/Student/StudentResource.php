@@ -20,8 +20,8 @@ class StudentResource extends JsonResource
             'university_name' => $this->university_name,
             'university_major' => $this->university_major,
             'mobile_number' => $this->code_mobile . '-' . $this->mobile_number,
+            'profile_photo' => asset('storage/' . $student->profile_image) ?? null,
             'gender' => $this->gender,
-            'profile_photo' => $this->profile_image,
 //            'username' => $this->username,
             'mentor' => $this->courses()->with('mentors')->get()
                 ->flatMap(fn($course) => $course->mentors)

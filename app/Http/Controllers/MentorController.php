@@ -7,6 +7,7 @@ use App\Http\Requests\FileRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\MentorRequest;
 use App\Http\Requests\ProfileImageRequest;
+use App\Http\Resources\Mentor\MentorDashboardResource;
 use App\Models\Mentor;
 use App\Repositories\Mentor\MentorRepository;
 use App\Traits\ApiResponseTrait;
@@ -57,10 +58,11 @@ class MentorController extends Controller
         }
     }
 
-    public function mentorInformation(Mentor $mentor)
+    public function updateMentorInformation(Request $request)
     {
         try {
-            $information = $this->repository->mentorInformation($mentor);
+            $mentor = auth()->guard('mentor')->user();
+            $information = $this->repository->updateInformation($mentor, $request->all());
             return $this->success($information);
         } catch (Throwable $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
@@ -68,11 +70,11 @@ class MentorController extends Controller
         }
     }
 
-    public function mentorDashboard(Mentor $mentor)
+    public function mentorDashboard()
     {
-        $mentor = auth()->guard('mentor')->user();
         try {
-            $dashboardData = $this->repository->mentorDashboard($mentor);
+            $mentor = auth()->guard('mentor')->user();
+            $dashboardData = new MentorDashboardResource($this->repository->mentorDashboard($mentor));
             return $this->success(data: $dashboardData);
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
@@ -112,9 +114,10 @@ class MentorController extends Controller
         }
     }
 
-    public function uploadProfileImage(ProfileImageRequest $request, Mentor $mentor)
+    public function uploadProfileImage(ProfileImageRequest $request)
     {
         try {
+            $mentor = auth()->guard('mentor')->user();
             $imageUrl = $this->repository->uploadProfileImage($mentor, $request->file('profile_image'));
             return $this->success($imageUrl, 'Profile image uploaded successfully');
         } catch (Throwable $th) {

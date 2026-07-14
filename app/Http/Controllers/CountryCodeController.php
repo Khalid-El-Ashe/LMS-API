@@ -22,4 +22,14 @@ class CountryCodeController extends Controller
             return $this->error('An error occurred while retrieving countries', 500);
         }
     }
+
+    public function statesList()
+    {
+        try {
+            $states = $this->countryService->getAllStates();
+            return $this->success($states, 'States retrieved successfully');
+        } catch (Exception $e) {
+            return $this->error('An error occurred while retrieving states', 500);
+        }
+    }
 }

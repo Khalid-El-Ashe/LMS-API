@@ -4,12 +4,14 @@ namespace App\Repositories\Student;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\StudentRequest;
+use App\Models\Mentor;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
 interface StudentRepository
 {
     public function getAllStudents();
+    public function getAllStudentsForMentor(Mentor $mentor);
 
     public function getAllStudentsIsTrashed();
 

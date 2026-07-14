@@ -1,0 +1,123 @@
+[
+    {
+        "id": 1,
+        "name": "فلسطين المحتلة",
+        "state_code": "PS",
+        "capital": "القدس الشريف"
+    },
+    {
+        "id": 2,
+        "name": "المملكة العربية السعودية",
+        "state_code": "SA",
+        "capital": "الرياض"
+    },
+    {
+        "id": 3,
+        "name": "جمهورية مصر العربية",
+        "state_code": "EG",
+        "capital": "القاهرة"
+    },
+    {
+        "id": 4,
+        "name": "الإمارات العربية المتحدة",
+        "state_code": "AE",
+        "capital": "أبوظبي"
+    },
+    {
+        "id": 5,
+        "name": "المملكة المغربية",
+        "state_code": "MA",
+        "capital": "الرباط"
+    },
+    {
+        "id": 6,
+        "name": "الجمهورية الجزائرية الديمقراطية الشعبية",
+        "state_code": "DZ",
+        "capital": "الجزائر"
+    },
+    {
+        "id": 7,
+        "name": "الجمهورية التونسية",
+        "state_code": "TN",
+        "capital": "تونس"
+    },
+    {
+        "id": 8,
+        "name": "المملكة الأردنية الهاشمية",
+        "state_code": "JO",
+        "capital": "عمان"
+    },
+    {
+        "id": 9,
+        "name": "الجمهورية العربية السورية",
+        "state_code": "SY",
+        "capital": "دمشق"
+    },
+    {
+        "id": 10,
+        "name": "جمهورية العراق",
+        "state_code": "IQ",
+        "capital": "بغداد"
+    },
+    {
+        "id": 11,
+        "name": "الولايات المتحدة الأمريكية",
+        "state_code": "US",
+        "capital": "واشنطن"
+    },
+    {
+        "id": 12,
+        "name": "اليابان",
+        "state_code": "JP",
+        "capital": "طوكيو"
+    },
+    {
+        "id": 13,
+        "name": "ألمانيا",
+        "state_code": "DE",
+        "capital": "برلين"
+    },
+    {
+        "id": 14,
+        "name": "فرنسا",
+        "state_code": "FR",
+        "capital": "باريس"
+    },
+    {
+        "id": 15,
+        "name": "المملكة المتحدة",
+        "state_code": "GB",
+        "capital": "لندن"
+    },
+    {
+        "id": 16,
+        "name": "كندا",
+        "state_code": "CA",
+        "capital": "أوتاوا"
+    },
+    {
+        "id": 17,
+        "name": "أستراليا",
+        "state_code": "AU",
+        "capital": "كانبرا"
+    },
+    {
+        "id": 18,
+        "name": "الصين",
+        "state_code": "CN",
+        "capital": "بكين"
+    },
+    {
+        "id": 19,
+        "name": "البرازيل",
+        "state_code": "BR",
+        "capital": "برازيليا"
+    },
+    {
+        "id": 20,
+        "name": "إيطاليا",
+        "state_code": "IT",
+        "capital": "روما"
+    }
+]
+
