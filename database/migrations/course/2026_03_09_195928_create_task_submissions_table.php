@@ -19,7 +19,7 @@ return new class extends Migration
 //            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
 
             $table->integer('grade')->nullable();
-            $table->text('answer')->nullable();
+//            $table->text('answer')->nullable();
             $table->string('file')->nullable();
 
             $table->foreignId('reviewed_by')->nullable()->constrained('mentors')->nullOnDelete();

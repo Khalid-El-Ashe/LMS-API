@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\VideController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -21,15 +22,16 @@ Route::prefix('course')->group(function () {
     Route::delete('/{course}', [CourseController::class, 'deleteCourse'])->middleware(['can:delete-course']);
     Route::post('/restore/{course}', [CourseController::class, 'restoreCourse'])->middleware(['can:restore-course']);
     Route::delete('/force-delete/{course}', [CourseController::class, 'forceDeleteCourse'])->middleware(['can:force-delete-course']);
-
 });
 
 Route::prefix('videos')->group(function () {
-    Route::post('/{video}/progress', [CourseController::class, 'updateProgressPosition']);
-    Route::post('/{video}/complete', [CourseController::class, 'completeVideo']);
-    Route::get('/{video}/resume', [CourseController::class, 'resumeVideo']);
-    Route::get('/mentor/course', [CourseController::class, 'getAllVideosForCourseMentor'])->middleware(['auth:mentor']);
+    Route::post('/{video}/progress', [VideController::class, 'updateProgressPosition']);
+    Route::post('/{video}/complete', [VideController::class, 'completeVideo']);
+    Route::get('/{video}/resume', [VideController::class, 'resumeVideo']);
+    Route::get('/mentor/course', [VideController::class, 'getAllVideosForCourseMentor'])->middleware(['auth:mentor']);
+    Route::get('/details/{courseVideo}', [VideController::class, 'getVideoDetailsMentor']);
+
 });
-Route::post('/video/{courseVideos}/comment', [CourseController::class, 'createComment']);
-Route::get('/video/{courseVideo}', [CourseController::class, 'getVideoDetails']);
+Route::post('/video/{courseVideos}/comment', [VideController::class, 'createComment']);
+Route::get('/video/{courseVideo}', [VideController::class, 'getVideoDetails']);
 //});

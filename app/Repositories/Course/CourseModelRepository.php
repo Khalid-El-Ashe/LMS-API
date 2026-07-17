@@ -73,7 +73,9 @@ class CourseModelRepository implements CourseRepository
         return CourseVideo::query()
             ->select([
                 'id',
-                'title'
+                'title',
+                'course_videos.created_at',
+                'course_videos.duration'
             ])
             ->whereHas('course.mentors', function ($query) use ($mentor) {
                 $query->where('mentors.id', $mentor->id);
@@ -96,12 +98,12 @@ class CourseModelRepository implements CourseRepository
 
         $video->setAttribute(
             'previous_video',
-            $video::previousVideo()
+            $video->previousVideo()
         );
 
         $video->setAttribute(
             'next_video',
-            $video::nextVideo()
+            $video->nextVideo()
         );
 
         return $video;

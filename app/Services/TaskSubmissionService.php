@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Mentor;
+use App\Models\Student;
+use App\Models\Task;
 use App\Models\TaskSubmission;
 use App\Repositories\Course\Task\TaskRepository;
 use Exception;
@@ -15,7 +17,7 @@ use Exception;
  */
 class TaskSubmissionService
 {
-    protected $taskRepo;
+    protected TaskRepository $taskRepo;
 
     public function __construct(TaskRepository $taskRepo)
     {
@@ -23,12 +25,17 @@ class TaskSubmissionService
     }
 
     # student submit
-    public function submit(int $taskId, int $studentId, array $data)
+    public function submit(int $taskId, int $studentId, array $data): TaskSubmission
     {
         $filePath = null;
 
         if (isset($data['file'])) {
-            $filePath = $data['file']->store('tasks/submissions', 'public');
+            $student = Student::query()->findOrFail($studentId);
+            $task = Task::query()->findOrFail($taskId);
+            $filePath = $data['file'];
+
+            $fileName = str_replace(' ', '_', $student->full_name . '_' . $task->title . '_' . time() . '.' . $filePath->getClientOriginalExtension());
+            $filePath = $filePath->storeAs('task_submissions', $fileName, 'public');
         }
 
         return TaskSubmission::query()->updateOrCreate(
@@ -37,9 +44,8 @@ class TaskSubmissionService
                 'student_id' => $studentId,
             ],
             [
-                'answer' => $data['answer'] ?? null,
+//                'answer' => $data['answer'] ?? null,
                 'file' => $filePath,
-//                'status' => 'pending',
                 'grade' => null,
                 'reviewed_by' => null,
                 'reviewed_at' => null,

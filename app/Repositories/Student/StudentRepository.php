@@ -12,6 +12,7 @@ interface StudentRepository
 {
     public function getAllStudents();
     public function getAllStudentsForMentor(Mentor $mentor);
+    public function getStudentInfoForMentor(Student $student);
 
     public function getAllStudentsIsTrashed();
 

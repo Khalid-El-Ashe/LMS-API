@@ -6,10 +6,12 @@ use App\Http\Requests\ReviewTaskRequest;
 use App\Http\Requests\SubmitTaskRequest;
 use App\Http\Requests\TaskRequest;
 use App\Models\Mentor;
+use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSubmission;
 use App\Repositories\Course\Task\TaskRepository;
 use App\Services\TaskSubmissionService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -39,7 +41,7 @@ class TaskController extends Controller
     {
         try {
             $submission = $this->submissionService->submit($task->id, auth()->guard('student')->id(), $request->validated());
-            return $this->success($submission, 'Task submitted successfully', 200);
+            return $this->success($submission, 'Task submitted successfully');
         } catch (Throwable $th) {
             $statusCode = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
             return $this->error($th->getMessage(), $statusCode);
@@ -64,6 +66,16 @@ class TaskController extends Controller
         try {
             $submissions = $this->taskRepo->getSubmissions($task->id);
             return $this->success($submissions, null, 200);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
+    public function getDetailsSubmission(TaskSubmission $submission)
+    {
+        try {
+            $submissionDetails = $this->taskRepo->getDetailsSubmission($submission);
+            return $this->success($submissionDetails);
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
         }
@@ -111,5 +123,53 @@ class TaskController extends Controller
         $mentor = auth()->guard('mentor')->user();
         $tasks = $this->taskRepo->taskShowInList($mentor);
         return $this->success($tasks, null, 200);
+    }
+
+    /**
+     * @param Student $student
+     *
+     * In this function need return all tasks by answers if found
+     */
+    public function getStudentTasks()
+    {
+        try {
+            $student = auth()->guard('student')->user();
+            $tasks = $this->taskRepo->getStudentTasks($student);
+            return $this->success($tasks);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
+    /**
+     * @param Student $student
+     *
+     * in here I need to return all tasks that not answered
+     */
+    public function getUnansweredTasks()
+    {
+        try {
+            $student = auth()->guard('student')->user();
+            $tasks = $this->taskRepo->getUnansweredTasks($student);
+            return $this->success($tasks);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
+    /**
+     * @param Student $student
+     *
+     * in here I need to return all tasks that answered by the student
+     */
+    public function getAnsweredTasks()
+    {
+        try {
+            $student = auth()->guard('student')->user();
+            $tasks = $this->taskRepo->getAnsweredTasks($student);
+            return $this->success($tasks);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 }

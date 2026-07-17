@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaskSubmission extends Model
 {
@@ -15,7 +14,7 @@ class TaskSubmission extends Model
         'file',
 //        'status',
         'grade',
-        'answer',
+//        'answer',
         'reviewed_at',
         'review_notes',
         'reviewed_by',
@@ -45,6 +44,19 @@ class TaskSubmission extends Model
     public function isReviewed()
     {
         return !is_null($this->reviewed_by);
+    }
+
+    /**
+     * @return Attribute
+     * this method is run automatically
+     */
+    protected function file(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => $value
+                ? asset('storage/' . $value)
+                : null
+        );
     }
 
 //    public function isReviewed()

@@ -88,7 +88,7 @@ class StudentDashboardResource extends JsonResource
         return [
             'student' => [
                 'name' => $student->full_name,
-                'slug' => $student->slug,
+                'username' => $student->username,
                 'email' => $student->email,
                 'mobile_number' => $student->code_mobile . $student->mobile_number,
                 'gender' => $student->gender,

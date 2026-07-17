@@ -23,10 +23,10 @@ class SubmitTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'answer' => ['nullable', 'string', 'max:5000'],
+//            'answer' => ['nullable', 'string', 'max:5000'],
 
             'file' => [
-                'nullable',
+                'required',
                 'file',
                 'max:10240', // 10MB
                 'mimes:pdf,zip,doc,docx,png,jpg,jpeg'
@@ -34,18 +34,17 @@ class SubmitTaskRequest extends FormRequest
 
             // optional if later you support link submissions
             'link' => ['nullable', 'url'],
-
         ];
     }
 
     public function messages(): array
     {
         return [
-            'answer.nullable' => 'Answer is required',
-            'answer.string' => 'Answer is not valid',
-            'answer.max' => 'Answer is too long',
-            'answer.file' => 'Answer is too large',
-            'answer.mimes' => 'Answer is not valid',
+//            'answer.nullable' => 'Answer is required',
+//            'answer.string' => 'Answer is not valid',
+//            'answer.max' => 'Answer is too long',
+//            'answer.file' => 'Answer is too large',
+//            'answer.mimes' => 'Answer is not valid',
             'file.mimes' => 'Only PDF, ZIP, images or docs are allowed.',
             'file.max' => 'File size must not exceed 10MB.',
             'link.url' => 'Link is not valid',

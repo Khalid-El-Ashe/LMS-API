@@ -6,6 +6,8 @@ use App\Http\Resources\Student\StudentResource;
 use App\Models\Admin;
 use App\Models\Mentor;
 use App\Models\Student;
+use App\Models\Task;
+use App\Models\TaskSubmission;
 use App\Notifications\NotifyNewStudent;
 use App\Notifications\WelcomeMessage;
 use App\Services\CountryService;
@@ -13,6 +15,7 @@ use App\Services\FileUploadService;
 use App\Services\MajorService;
 use App\Services\UniversityService;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -49,10 +52,55 @@ class StudentModelRepository implements StudentRepository
         })->latest()
             ->paginate(10)->through(fn($student) => [
                 'full_name' => $student->full_name,
+                'slug' => $student->slug,
                 'email' => $student->email,
-                'profil e_photo' => asset('storage/' . $student->profile_image) ?? null,
+                'profile_photo' => asset('storage/' . $student->profile_image) ?? null,
                 'courses' => $student->courses->pluck('name')->values(),
             ]);
+    }
+
+    public function getStudentInfoForMentor(Student $student)
+    {
+//        $student->load('courses:id,name');
+//
+//        return [
+//            'slug' => $student->slug,
+//            'full_name' => $student->full_name,
+//            'email' => $student->email,
+//            'profile_image' => $student->profile_image
+//                ? asset('storage/' . $student->profile_image)
+//                : null,
+//            'university_name' => $student->university_name,
+//            'university_major' => $student->university_major,
+//            'mobile_number' => $student->code_mobile . $student->mobile_number,
+//            'gender' => $student->gender,
+//            'courses' => $student->courses->map(fn ($course) => [
+//                'id' => $course->id,
+//                'name' => $course->name,
+//            ]),
+//        ];
+
+        $student->load([
+            'courses.mentors',
+            'courses.tasks',
+            'submissions'
+        ]);
+
+        $totalTasks = $student->courses
+            ->flatMap->tasks
+            ->unique('id')
+            ->count();
+
+        $answeredTasks = $student->submissions
+            ->pluck('task_id')
+            ->unique()
+            ->count();
+
+
+        $student->total_tasks = $totalTasks;
+        $student->answered_tasks = $answeredTasks;
+
+        return $student;
     }
 
     public function getAllStudentsIsTrashed()
@@ -62,7 +110,6 @@ class StudentModelRepository implements StudentRepository
             'full_name' => $student->full_name,
             'email' => $student->email,
             'profile_photo' => asset('storage/' . $student->profile_image) ?? null,
-            'courses' => $student->courses->pluck('name'),
         ]);
     }
 
@@ -294,4 +341,7 @@ class StudentModelRepository implements StudentRepository
             'videoProgress'
         ]);
     }
+
+
+
 }

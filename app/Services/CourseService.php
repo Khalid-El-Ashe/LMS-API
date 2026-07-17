@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\Course\CourseVideosResource;
+use App\Http\Resources\Course\VideoResource;
 use App\Jobs\FetchPlaylistVideosJob;
 use App\Models\CourseVideo;
 use App\Repositories\Course\CourseRepository;
@@ -89,7 +90,5 @@ class CourseService
         return new CourseVideosResource(
             $this->courseRepo->getVideoDetails($courseVideo)
         );
-
     }
-
 }

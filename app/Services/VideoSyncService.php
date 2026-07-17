@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\CourseVideo;
 use App\Repositories\Course\CourseRepository;
 
 class VideoSyncService
@@ -52,6 +53,5 @@ class VideoSyncService
             ['course_id', 'youtube_id'],
             ['title', 'description', 'duration', 'thumbnail', 'order']
         );
-
     }
 }

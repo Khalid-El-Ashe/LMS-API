@@ -23,6 +23,11 @@ class MentorDashboardResource extends JsonResource
             'mentor' => [
                 'name' => $mentor->name,
                 'email' => $mentor->email,
+                'username' => $mentor->username,
+                'mobile_number' => $mentor->code_mobile . $mentor->mobile_number,
+                'city' => $mentor->city,
+                'address' => $mentor->address,
+                'state' => $mentor->state,
                 'profile_image' => asset('storage/' . $mentor->profile_image) ?? null,
             ],
 

@@ -18,6 +18,8 @@ class CourseVideosResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'youtube_id' => $this->youtube_id,
+            'duration' => gmdate('i:s', $this->duration),
+            'created_at' => $this->created_at->format('Y-m-d'),
 
             'embed_url' => $this->embed_url,
             'video_url' => $this->video_url,

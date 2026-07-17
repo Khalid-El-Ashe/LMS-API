@@ -39,6 +39,8 @@ Route::prefix('students')->group(function () {
         Route::get('/all_trashed', [StudentController::class, 'getAllStudentsIsTrashed'])->middleware('can:show-trashed-students');
 
         Route::get('/filter', [StudentController::class, 'filterStudents']);
+
     });
 });
 Route::get('/mentor/students', [StudentController::class, 'getAllStudentsForMentor'])->middleware('auth:mentor');
+Route::get('/mentor/students/{student}', [StudentController::class, 'getStudentProfileForMentor'])->middleware('auth:mentor');

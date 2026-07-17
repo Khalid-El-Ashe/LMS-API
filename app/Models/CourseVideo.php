@@ -21,6 +21,7 @@ class CourseVideo extends Model
 
     protected $appends = ['video_url', 'embed_url'];
 
+
     public function getVideoUrlAttribute()
     {
         return "https://www.youtube.com/watch?v=" . $this->youtube_id;

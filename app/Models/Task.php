@@ -9,6 +9,9 @@ class Task extends Model
 {
     use SoftDeletes;
 
+    /**
+     * @var \Illuminate\Support\HigherOrderCollectionProxy|mixed
+     */
     protected $fillable = [
         'course_id',
         'video_id',

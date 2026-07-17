@@ -6,8 +6,10 @@ use App\Http\Requests\FileRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ProfileImageRequest;
 use App\Http\Requests\StudentRequest;
+use App\Http\Resources\Course\TaskResource;
 use App\Http\Resources\Student\StudentDashboardResource;
 use App\Http\Resources\Student\StudentPathResource;
+use App\Http\Resources\Student\StudentResource;
 use App\Models\Student;
 use App\Repositories\Student\StudentRepository;
 use Illuminate\Http\Request;
@@ -119,6 +121,18 @@ class StudentController extends Controller
         } catch (Exception $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
             return $this->error('An error occurred while retrieving students for the mentor\n' . $th->getMessage(), $status);
+        }
+    }
+
+    public function getStudentProfileForMentor(Student $student)
+    {
+        try {
+            $info = $this->studentRepository->getStudentInfoForMentor($student);
+            $info = new StudentResource($info);
+            return $this->success(data: $info, code: ResponseAlias::HTTP_OK);
+        } catch (Exception $th) {
+            $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
+            return $this->error('An error occurred while retrieving student info\n' . $th->getMessage(), $status);
         }
     }
 
