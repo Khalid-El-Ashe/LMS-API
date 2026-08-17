@@ -8,6 +8,8 @@ use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSubmission;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaskModelRepository implements TaskRepository
 {
@@ -95,6 +97,7 @@ class TaskModelRepository implements TaskRepository
     public function getStudentTasks(Student $student)
     {
         $tasks = Task::query()->select([
+            'tasks.id',
             'tasks.title',
             'tasks.course_id',
             'tasks.video_id',
@@ -220,6 +223,22 @@ class TaskModelRepository implements TaskRepository
             ->where('task_id', $taskId)->with('student:id,full_name', 'reviewer:id,name')
             ->latest()
             ->get();
+    }
+
+    public function getDetailsTask(Task $task): Task
+    {
+        return Task::query()
+            ->select([
+                'tasks.id',
+                'tasks.title',
+                'tasks.course_id',
+                'tasks.video_id',
+                'tasks.description',
+            ])
+            ->with([
+                'video:id,title',
+            ])
+            ->findOrFail($task->id);
     }
 
     public function getDetailsSubmission(TaskSubmission $submissionId)

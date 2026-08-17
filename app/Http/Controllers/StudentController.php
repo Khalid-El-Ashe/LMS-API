@@ -12,6 +12,7 @@ use App\Http\Resources\Student\StudentPathResource;
 use App\Http\Resources\Student\StudentResource;
 use App\Models\Student;
 use App\Repositories\Student\StudentRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\Response;
@@ -270,5 +271,11 @@ class StudentController extends Controller
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
             return $this->error('An error occurred while retrieving student path\n' . $th->getMessage(), $status);
         }
+    }
+
+    public function getAllStudentsCount(): JsonResponse
+    {
+        $count = Student::query()->count();
+        return $this->success($count);
     }
 }

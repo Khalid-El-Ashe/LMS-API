@@ -141,6 +141,16 @@ class TaskController extends Controller
         }
     }
 
+    public function getDetailsTask(Task $task)
+    {
+        try {
+            $task_details = $this->taskRepo->getDetailsTask($task);
+            return $this->success($task_details);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
     /**
      * @param Student $student
      *

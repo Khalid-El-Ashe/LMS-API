@@ -4,7 +4,10 @@ namespace App\Repositories\Course\Task;
 
 use App\Models\Mentor;
 use App\Models\Student;
+use App\Models\Task;
 use App\Models\TaskSubmission;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface TaskRepository
 {
@@ -25,11 +28,14 @@ interface TaskRepository
 //    public function taskShowInListToStudent(Student $student);
     public function getStudentTasks(Student $student);
 
+    public function getDetailsTask(Task $task): Task;
+
     public function getAnsweredTasks(Student $student);
 
     public function getUnansweredTasks(Student $student);
 
     public function getSubmissions(int $taskId);
+
     public function getDetailsSubmission(TaskSubmission $submissionId);
 
     public function getStudentSubmissions(int $mentorId);

@@ -11,10 +11,21 @@ Route::prefix('mentor')->group(function () {
         Route::post('/logout', [MentorController::class, 'logout'])->middleware(['auth:mentor']);
     });
 
-    Route::post('/upload-profile-image', [MentorController::class, 'uploadProfileImage'])->middleware(['auth:mentor']);
-    Route::post('/upload-multiple-files', [MentorController::class, 'uploadMultipleFiles'])->middleware(['auth:mentor']);
-    Route::patch('/update-mentor-information', [MentorController::class, 'updateMentorInformation'])->middleware(['auth:mentor']); #->middleware('can:mentor-information');
-    Route::post('/enable-account/{mentor}', [MentorController::class, 'enableAccount'])->middleware(['auth:admin']);
-    Route::post('/disable-account/{mentor}', [MentorController::class, 'disableAccount'])->middleware(['auth:admin']);
-    Route::get('/dashboard', [MentorController::class, 'mentorDashboard'])->middleware(['auth:mentor']);
+    Route::get('/all-mentors', [MentorController::class, 'getAllMentors']);
+
+    Route::middleware(['auth:admin'])->group(function () {
+        Route::post('/enable-account/{mentor}', [MentorController::class, 'enableAccount'])->middleware(['auth:admin']);
+        Route::post('/disable-account/{mentor}', [MentorController::class, 'disableAccount'])->middleware(['auth:admin']);
+        Route::get('count', [MentorController::class, 'getAllMentorsCount']);
+    });
+
+    Route::middleware(['auth:mentor'])->group(function () {
+
+        Route::post('/upload-profile-image', [MentorController::class, 'uploadProfileImage'])->middleware(['auth:mentor']);
+        Route::post('/upload-multiple-files', [MentorController::class, 'uploadMultipleFiles'])->middleware(['auth:mentor']);
+        Route::patch('/update-mentor-information', [MentorController::class, 'updateMentorInformation'])->middleware(['auth:mentor']); #->middleware('can:mentor-information');
+
+        Route::get('/dashboard', [MentorController::class, 'mentorDashboard'])->middleware(['auth:mentor']);
+    });
+
 });

@@ -17,8 +17,20 @@ Route::prefix('students')->group(function () {
     /**
      * STUDENT SELF ROUTES
      */
+    Route::get('/all-students', [StudentController::class, 'getAllStudents']);
+    Route::middleware(['auth:admin'])->group(function () {
+
+        Route::post('/enableAccount/{student}', [StudentController::class, 'enableStudent'])->middleware('can:enable-student');
+        Route::post('/disableAccount/{student}', [StudentController::class, 'disableStudent'])->middleware('can:disable-student');
+
+        Route::delete('/delete/{student}', [StudentController::class, 'deleteStudent'])->middleware('can:delete-student');
+        Route::post('/restore/{student}', [StudentController::class, 'restoreStudent'])->middleware('can:restore-student');
+        Route::delete('/forceDelete/{student}', [StudentController::class, 'forceDeleteStudent'])->middleware('can:force-delete-student');
+        Route::get('/all_trashed', [StudentController::class, 'getAllStudentsIsTrashed'])->middleware('can:show-trashed-students');
+
+        Route::get('count', [StudentController::class, 'getAllStudentsCount']);
+    });
     Route::middleware(['auth:student'])->group(function () {
-        Route::get('/', [StudentController::class, 'getAllStudents'])->middleware('auth:admin');
 
         Route::get('/student-profile', [StudentController::class, 'getStudentProfile']);
         Route::get('/student-path', [StudentController::class, 'path']);
@@ -29,14 +41,6 @@ Route::prefix('students')->group(function () {
 
         Route::post('/upload-profile-image', [StudentController::class, 'uploadProfileImage']);
         Route::post('/upload-multiple-files', [StudentController::class, 'uploadMultipleFiles']);
-
-        Route::post('/enableAccount/{student}', [StudentController::class, 'enableStudent'])->middleware('can:enable-student');
-        Route::post('/disableAccount/{student}', [StudentController::class, 'disableStudent'])->middleware('can:disable-student');
-
-        Route::delete('/delete/{student}', [StudentController::class, 'deleteStudent'])->middleware('can:delete-student');
-        Route::post('/restore/{student}', [StudentController::class, 'restoreStudent'])->middleware('can:restore-student');
-        Route::delete('/forceDelete/{student}', [StudentController::class, 'forceDeleteStudent'])->middleware('can:force-delete-student');
-        Route::get('/all_trashed', [StudentController::class, 'getAllStudentsIsTrashed'])->middleware('can:show-trashed-students');
 
         Route::get('/filter', [StudentController::class, 'filterStudents']);
 

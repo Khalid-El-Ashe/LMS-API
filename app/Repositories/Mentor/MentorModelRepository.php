@@ -13,6 +13,7 @@ use App\Services\CountryService;
 use App\Services\FileUploadService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -68,6 +69,17 @@ class MentorModelRepository implements MentorRepository
             'username' => $mentor->username,
             'id' => $mentor->id,
         ];
+    }
+
+    public function getAllMentors()
+    {
+        return Mentor::withoutTrashed()->with('courses')->latest()->paginate()->map(fn($student) => [
+            'name' => $student->name,
+            'slug' => $student->slug,
+            'status' => $student->status,
+            'email' => $student->email,
+            'courses' => $student->courses->pluck('name'),
+        ]);
     }
 
     public function loginMentor(array $data)

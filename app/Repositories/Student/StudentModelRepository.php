@@ -36,10 +36,10 @@ class StudentModelRepository implements StudentRepository
     // this function for admin
     public function getAllStudents()
     {
-        $students = Student::withoutTrashed()->with('courses')->latest()->paginate(10);
-
-        return $students->map(fn($student) => [
+        return Student::withoutTrashed()->with('courses')->latest()->paginate()->map(fn($student) => [
             'full_name' => $student->full_name,
+            'slug' => $student->slug,
+            'status' => $student->status,
             'email' => $student->email,
             'courses' => $student->courses->pluck('name'),
         ]);

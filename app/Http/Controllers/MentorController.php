@@ -11,6 +11,7 @@ use App\Http\Resources\Mentor\MentorDashboardResource;
 use App\Models\Mentor;
 use App\Repositories\Mentor\MentorRepository;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -64,6 +65,17 @@ class MentorController extends Controller
             $mentor = auth()->guard('mentor')->user();
             $information = $this->repository->updateInformation($mentor, $request->all());
             return $this->success($information);
+        } catch (Throwable $th) {
+            $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
+            return $this->error($th->getMessage(), $status);
+        }
+    }
+
+    public function getAllMentors()
+    {
+        try {
+            $mentors = $this->repository->getAllMentors();
+            return $this->success(data: $mentors);
         } catch (Throwable $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : 500;
             return $this->error($th->getMessage(), $status);
@@ -133,5 +145,11 @@ class MentorController extends Controller
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
         }
+    }
+
+    public function getAllMentorsCount(): JsonResponse
+    {
+        $count = Mentor::query()->count();
+        return $this->success($count);
     }
 }

@@ -17,11 +17,11 @@ class CourseController extends Controller
 {
 
     public function __construct(
-        private readonly CourseRepository     $courseRepo,
-        private readonly CourseService        $courseService,
+        private readonly CourseRepository   $courseRepo,
+        private readonly CourseService      $courseService,
 //        private TaskRepository     $taskModelRepository,
-        private readonly CourseLinksService   $linkService,
-        private readonly LinkRepository       $linkRepo,
+        private readonly CourseLinksService $linkService,
+        private readonly LinkRepository     $linkRepo,
     )
     {
     }
@@ -55,7 +55,6 @@ class CourseController extends Controller
             return $this->error($th->getMessage());
         }
     }
-
 
 
     public function updateCourse(CourseRequest $request, Course $course)
@@ -136,5 +135,11 @@ class CourseController extends Controller
         } catch (Throwable $th) {
             return $this->error($th->getMessage());
         }
+    }
+
+    public function getAllCoursesCount()
+    {
+        $count = Course::query()->count();
+        return $this->success($count, null);
     }
 }

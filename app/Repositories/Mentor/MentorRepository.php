@@ -11,6 +11,7 @@ use App\Models\Student;
 interface MentorRepository
 {
     public function registerMentor(array $data);
+    public function getAllMentors();
 
     public function loginMentor(array $data);
 

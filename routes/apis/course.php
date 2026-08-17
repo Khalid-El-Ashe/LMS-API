@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('course')->group(function () {
-    Route::get('list', [CourseController::class, 'getAllCourses']);
+    Route::get('all-course', [CourseController::class, 'getAllCourses']);
+    Route::get('count', [CourseController::class, 'getAllCoursesCount']);
+
     Route::get('/{course}', [CourseController::class, 'getCourse']);
     Route::post('/create', [CourseController::class, 'createCourse'])->middleware(['auth:admin', 'can:create-course']);
 
@@ -32,6 +34,7 @@ Route::prefix('videos')->group(function () {
     Route::get('/details/{courseVideo}', [VideController::class, 'getVideoDetailsMentor']);
 
 });
+
 Route::post('/video/{courseVideos}/comment', [VideController::class, 'createComment']);
 Route::get('/video/{courseVideo}', [VideController::class, 'getVideoDetails']);
 //});
