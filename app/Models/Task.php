@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\HigherOrderCollectionProxy;
 
 class Task extends Model
 {
     use SoftDeletes;
 
     /**
-     * @var \Illuminate\Support\HigherOrderCollectionProxy|mixed
+     * @var HigherOrderCollectionProxy|mixed
      */
     protected $fillable = [
         'course_id',
@@ -79,4 +81,12 @@ class Task extends Model
 //    {
 //        return $this->morphMany(Comment::class, 'commentable');
 //    }
+
+
+    public function scopeForStudent(Builder $query, int $studentId): Builder
+    {
+        return $query->whereHas('course.students', function ($query) use ($studentId) {
+            $query->where('students.id', $studentId);
+        });
+    }
 }

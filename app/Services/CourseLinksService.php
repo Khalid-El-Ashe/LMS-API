@@ -3,18 +3,12 @@
 namespace App\Services;
 
 use App\Models\Course;
-use App\Repositories\Course\Link\LinkRepository;
 use Carbon\Carbon;
 use InvalidArgumentException;
 
 class CourseLinksService
 {
-    protected $linkRepo;
-
-    public function __construct(LinkRepository $linkRepo)
-    {
-        $this->linkRepo = $linkRepo;
-    }
+    // public function __construct(private readonly  LinkRepository $linkRepo) {}
 
     public function createLink(int $courseId, array $data)
     {

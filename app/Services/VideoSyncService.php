@@ -3,20 +3,12 @@
 namespace App\Services;
 
 use App\Models\Course;
-use App\Models\CourseVideo;
-use App\Repositories\Course\CourseRepository;
 
 class VideoSyncService
 {
 
-    protected $courseRepo;
-    protected $youtubeService;
 
-    public function __construct(CourseRepository $courseRepo, YoutubeService $youtubeService)
-    {
-        $this->courseRepo = $courseRepo;
-        $this->youtubeService = $youtubeService;
-    }
+    public function __construct(private readonly YoutubeService $youtubeService) {}
 
     /**
      * @param Course $course

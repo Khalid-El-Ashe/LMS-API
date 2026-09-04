@@ -26,6 +26,16 @@ class CourseController extends Controller
     {
     }
 
+    public function index()
+    {
+        try {
+            $courses = $this->courseRepo->getAllCourses();
+            return $this->success($courses);
+        } catch (Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+    }
+
     public function createCourse(CourseRequest $request)
     {
         try {

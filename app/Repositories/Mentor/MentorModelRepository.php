@@ -73,12 +73,13 @@ class MentorModelRepository implements MentorRepository
 
     public function getAllMentors()
     {
-        return Mentor::withoutTrashed()->with('courses')->latest()->paginate()->map(fn($student) => [
-            'name' => $student->name,
-            'slug' => $student->slug,
-            'status' => $student->status,
-            'email' => $student->email,
-            'courses' => $student->courses->pluck('name'),
+        return Mentor::withoutTrashed()->with('courses')->latest()->paginate()->map(fn($mentor) => [
+            'name' => $mentor->name,
+            'slug' => $mentor->slug,
+            'status' => $mentor->status,
+            'email' => $mentor->email,
+            'username' => $mentor->username,
+            'courses' => $mentor->courses->pluck('name'),
         ]);
     }
 

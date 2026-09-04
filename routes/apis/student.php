@@ -31,7 +31,7 @@ Route::prefix('students')->group(function () {
         Route::get('count', [StudentController::class, 'getAllStudentsCount']);
     });
     Route::middleware(['auth:student'])->group(function () {
-
+    
         Route::get('/student-profile', [StudentController::class, 'getStudentProfile']);
         Route::get('/student-path', [StudentController::class, 'path']);
         Route::patch('/update-student-data', [StudentController::class, 'updateStudentData']);

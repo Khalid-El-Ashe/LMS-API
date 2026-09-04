@@ -6,8 +6,6 @@ use App\Http\Resources\Student\StudentResource;
 use App\Models\Admin;
 use App\Models\Mentor;
 use App\Models\Student;
-use App\Models\Task;
-use App\Models\TaskSubmission;
 use App\Notifications\NotifyNewStudent;
 use App\Notifications\WelcomeMessage;
 use App\Services\CountryService;
@@ -15,7 +13,6 @@ use App\Services\FileUploadService;
 use App\Services\MajorService;
 use App\Services\UniversityService;
 use App\Traits\ApiResponseTrait;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
@@ -23,15 +20,12 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use function PHPUnit\Framework\throwException;
 
 class StudentModelRepository implements StudentRepository
 {
     use ApiResponseTrait;
 
-    public function __construct(private readonly FileUploadService $fileUploadService)
-    {
-    }
+    public function __construct(private readonly FileUploadService $fileUploadService) {}
 
     // this function for admin
     public function getAllStudents()
@@ -41,6 +35,7 @@ class StudentModelRepository implements StudentRepository
             'slug' => $student->slug,
             'status' => $student->status,
             'email' => $student->email,
+            'username' => $student->username,
             'courses' => $student->courses->pluck('name'),
         ]);
     }
@@ -61,24 +56,24 @@ class StudentModelRepository implements StudentRepository
 
     public function getStudentInfoForMentor(Student $student)
     {
-//        $student->load('courses:id,name');
-//
-//        return [
-//            'slug' => $student->slug,
-//            'full_name' => $student->full_name,
-//            'email' => $student->email,
-//            'profile_image' => $student->profile_image
-//                ? asset('storage/' . $student->profile_image)
-//                : null,
-//            'university_name' => $student->university_name,
-//            'university_major' => $student->university_major,
-//            'mobile_number' => $student->code_mobile . $student->mobile_number,
-//            'gender' => $student->gender,
-//            'courses' => $student->courses->map(fn ($course) => [
-//                'id' => $course->id,
-//                'name' => $course->name,
-//            ]),
-//        ];
+        //        $student->load('courses:id,name');
+        //
+        //        return [
+        //            'slug' => $student->slug,
+        //            'full_name' => $student->full_name,
+        //            'email' => $student->email,
+        //            'profile_image' => $student->profile_image
+        //                ? asset('storage/' . $student->profile_image)
+        //                : null,
+        //            'university_name' => $student->university_name,
+        //            'university_major' => $student->university_major,
+        //            'mobile_number' => $student->code_mobile . $student->mobile_number,
+        //            'gender' => $student->gender,
+        //            'courses' => $student->courses->map(fn ($course) => [
+        //                'id' => $course->id,
+        //                'name' => $course->name,
+        //            ]),
+        //        ];
 
         $student->load([
             'courses.mentors',
@@ -147,7 +142,7 @@ class StudentModelRepository implements StudentRepository
         }
 
         $student->notify(new WelcomeMessage()); // email student
-//        return new StudentResource($student->load('courses'));
+        //        return new StudentResource($student->load('courses'));
         return [
             'full_name' => $student->full_name,
             'username' => $student->username,
@@ -204,14 +199,14 @@ class StudentModelRepository implements StudentRepository
         $student = Auth::guard('student')->user();
 
         if (!$student) {
-            return throw ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'user' => ['User not authenticated'],
             ]);
         }
 
         // Delete the current access token directly
-//        $user->currentAccessToken()?->delete();
-//        Cache::forget('student_token_' . $user->id);
+        //        $user->currentAccessToken()?->delete();
+        //        Cache::forget('student_token_' . $user->id);
         Auth::guard('student')->logout();
         \request()->session()->invalidate();
         \request()->session()->regenerateToken();
@@ -220,7 +215,7 @@ class StudentModelRepository implements StudentRepository
 
     public function updateStudentData(Student $student, array $data)
     {
-//        $student = Student::query()->findOrFail($data['student_id']);
+        //        $student = Student::query()->findOrFail($data['student_id']);
         $student->update($data);
         return $student->fresh();
     }
@@ -341,7 +336,4 @@ class StudentModelRepository implements StudentRepository
             'videoProgress'
         ]);
     }
-
-
-
 }

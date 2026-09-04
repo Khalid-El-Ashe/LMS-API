@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('last_news', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('landing_page', function (Blueprint $table) {
+            $table->string('graduate_program_video_url')->nullable();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('last_news');
+        Schema::table('landing_page', function (Blueprint $table) {
+            $table->dropColumn('graduate_program_video_url');
+        });
     }
 };

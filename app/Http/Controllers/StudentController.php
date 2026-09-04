@@ -25,9 +25,7 @@ class StudentController extends Controller
      * need to cut the Logic or the Backend Code
      * in here Just the Request
      */
-    public function __construct(private readonly StudentRepository $studentRepository)
-    {
-    }
+    public function __construct(private readonly StudentRepository $studentRepository) {}
 
     public function getAllStudents()
     {
@@ -36,7 +34,7 @@ class StudentController extends Controller
             return $this->success(data: $students, code: ResponseAlias::HTTP_OK);
         } catch (Exception $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
-            return $this->error(__('message.an_error_occurred_while_retrieving_students'), $status);
+            return $this->error('An error occurred while retrieving students', $status);
         }
     }
 
@@ -90,7 +88,7 @@ class StudentController extends Controller
         try {
             $result = $this->studentRepository->logout();
             if (!$result) {
-                return $this->error('Token not found or already deleted', ResponseAlias::HTTP_NOT_FOUND);
+                return $this->error('Not found or already deleted', ResponseAlias::HTTP_NOT_FOUND);
             }
             return $this->success(data: null, code: ResponseAlias::HTTP_OK);
         } catch (Exception $th) {
@@ -266,7 +264,6 @@ class StudentController extends Controller
         try {
             $path = $this->studentRepository->getStudentPath();
             return $this->success(data: new StudentPathResource($path), code: ResponseAlias::HTTP_OK);
-
         } catch (Exception $th) {
             $status = method_exists($th, 'getStatusCode') ? $th->getStatusCode() : ResponseAlias::HTTP_INTERNAL_SERVER_ERROR;
             return $this->error('An error occurred while retrieving student path\n' . $th->getMessage(), $status);

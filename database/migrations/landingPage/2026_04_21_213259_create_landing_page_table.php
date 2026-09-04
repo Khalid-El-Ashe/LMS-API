@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,10 +12,11 @@ return new class extends Migration
     {
         Schema::create('landing_page', function (Blueprint $table) {
             $table->id();
-            $table->string('video_info');
-            # success_stories : student_name, path_name,
-            # last_news : title, description, path_name
-            # photos : list of photos
+            $table->integer('graduates_count')->default(0); # عدد الخريجين
+            $table->integer('courses_count')->default(0); # عدد الدورات
+            $table->integer('professional_trainer_count')->default(0); # عدد المدربين
+            $table->integer('success_stories_count')->default(0); # عدد قصص النجاح
+            $table->integer('practical_projects_count')->default(0); # عدد المشاريع العملية
             $table->timestamps();
         });
     }

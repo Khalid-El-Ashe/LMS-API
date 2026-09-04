@@ -115,14 +115,14 @@ class CourseModelRepository implements CourseRepository
         $page = request('page', 1);
         $key = "courseVideo_{$courseVideo->id}_comments_page_{$page}";
         return Cache::tags(['courses:comments'])->remember($key, 3600, function () use ($courseVideo) {
-            $comments = $courseVideo->comments()->with('user')->first()->paginate(10);
+            $comments = $courseVideo->comments()->with('user')->paginate(10)->first();
             return CourseCommentsResource::collection($comments);
         });
     }
 
     public function getCourseStudents(Course $course)
     {
-        $page = request()->get('page', 1);
+        $page = request()->input('page', 1);
         $key = "course_{$course->id}_students_page_{$page}";
         return Cache::tags(['courses'])->remember($key, 3600, function () use ($course) {
             return $course->students()->paginate(10);
@@ -133,7 +133,7 @@ class CourseModelRepository implements CourseRepository
 
     public function getCourseMentors(Course $course)
     {
-        $page = request()->get('page', 1);
+        $page = request()->input('page', 1);
         $key = "course_{$course->id}_mentors_page_{$page}";
         return Cache::tags(['courses'])->remember($key, 3600, function () use ($course) {
             return $course->mentors()->paginate(10);

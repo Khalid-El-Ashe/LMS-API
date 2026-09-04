@@ -14,28 +14,28 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         RateLimiter::for('students/auth/register', function (Request $request) {
-             // return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('students/auth/register', function (Request $request) {
+            // return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
 
-             return Limit::perDay(7)->by(
-                 $request->input('email') . '|' . $request->ip()
-             )->response(function () {
-                 return response()->json([
-                     'message' => 'Too many register attempts. Try again tomorrow.'
-                 ], 429);
-             });
-         });
+            return Limit::perHour(24)->by(
+                $request->input('email') . '|' . $request->ip()
+            )->response(function () {
+                return response()->json([
+                    'message' => 'Too many register attempts. Try again after 24 hours.'
+                ], 429);
+            });
+        });
 
-        // RateLimiter::for('students/auth/login', function (Request $request) {
-        //     // return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        RateLimiter::for('students/auth/login', function (Request $request) {
+            // return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
 
-        //     return Limit::perDay(1)->by(
-        //         $request->input('username') . '|' . $request->ip()
-        //     )->response(function () {
-        //         return response()->json([
-        //             'message' => 'Too many login attempts. Try again tomorrow.'
-        //         ], 429);
-        //     });
-        // });
+            return Limit::perDay(1)->by(
+                $request->input('username') . '|' . $request->ip()
+            )->response(function () {
+                return response()->json([
+                    'message' => 'Too many login attempts. Try again tomorrow.'
+                ], 429);
+            });
+        });
     }
 }

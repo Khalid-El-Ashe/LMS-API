@@ -6,8 +6,6 @@ use App\Models\Mentor;
 use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSubmission;
-use App\Repositories\Course\Task\TaskRepository;
-use Exception;
 
 /**
  * Submit Task
@@ -17,12 +15,8 @@ use Exception;
  */
 class TaskSubmissionService
 {
-    protected TaskRepository $taskRepo;
 
-    public function __construct(TaskRepository $taskRepo)
-    {
-        $this->taskRepo = $taskRepo;
-    }
+    // public function __construct(private readonly TaskRepository $taskRepo) {}
 
     # student submit
     public function submit(int $taskId, int $studentId, array $data): TaskSubmission
@@ -44,7 +38,7 @@ class TaskSubmissionService
                 'student_id' => $studentId,
             ],
             [
-//                'answer' => $data['answer'] ?? null,
+                //                'answer' => $data['answer'] ?? null,
                 'file' => $filePath,
                 'grade' => null,
                 'reviewed_by' => null,
@@ -72,36 +66,36 @@ class TaskSubmissionService
     }
 
     # اعتماد الحل من المدرب
-//    public function approve(TaskSubmission $submission, int $mentorId, ?int $grade = null, ?string $note = null)
-//    {
-//        $task = $submission->task;
-//
-//        if ($task->passing_grade && $grade !== null && $grade < $task->passing_grade) {
-//            throw new Exception("Grade {$grade} is below passing grade {$task->passing_grade}");
-//        }
-//
-//        $submission->update([
-////            'status' => 'approved',
-//            'grade' => $grade,
-//            'reviewed_by' => $mentorId,
-//            'reviewed_at' => now(),
-//            'review_notes' => $note,
-//        ]);
-//
-//        return $submission->fresh();
-//    }
+    //    public function approve(TaskSubmission $submission, int $mentorId, ?int $grade = null, ?string $note = null)
+    //    {
+    //        $task = $submission->task;
+    //
+    //        if ($task->passing_grade && $grade !== null && $grade < $task->passing_grade) {
+    //            throw new Exception("Grade {$grade} is below passing grade {$task->passing_grade}");
+    //        }
+    //
+    //        $submission->update([
+    ////            'status' => 'approved',
+    //            'grade' => $grade,
+    //            'reviewed_by' => $mentorId,
+    //            'reviewed_at' => now(),
+    //            'review_notes' => $note,
+    //        ]);
+    //
+    //        return $submission->fresh();
+    //    }
 
     # المدرب يرفض الطلب
-//    public function reject(TaskSubmission $submission, int $mentorId, string $notes)
-//    {
-//
-//        $submission->update([
-////            'status' => 'rejected',
-//            'review_notes' => $notes,
-//            'reviewed_by' => $mentorId,
-//            'reviewed_at' => now(),
-//        ]);
-//
-//        return $submission->fresh();
-//    }
+    //    public function reject(TaskSubmission $submission, int $mentorId, string $notes)
+    //    {
+    //
+    //        $submission->update([
+    ////            'status' => 'rejected',
+    //            'review_notes' => $notes,
+    //            'reviewed_by' => $mentorId,
+    //            'reviewed_at' => now(),
+    //        ]);
+    //
+    //        return $submission->fresh();
+    //    }
 }

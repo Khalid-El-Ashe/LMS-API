@@ -1,37 +1,6 @@
 <?php
-//
-//use App\Http\Controllers\TaskController;
-//
-//Route::prefix('tasks')->group(function () {
-//
-//
-//
-//    Route::get('/all', [TaskController::class, 'getStudentTasks']);
-//    Route::get('{task}', [TaskController::class, 'getTaskDetails']);
-//
-//    Route::middleware('auth:student')->group(function () {
-//        Route::post('/{task}/submit', [TaskController::class, 'submitTask']); // يجاوب
-//    });
-//
-//    Route::middleware('auth:mentor')->group(function () {
-//        Route::post('/new-task', [TaskController::class, 'createTask']);    // ينشئ Task
-//
-//        Route::get('/submissions', [TaskController::class, 'getTaskSubmissions']); #->middleware('can:get-task-pending');         // إجابات طلابه
-//        Route::patch('/submissions/{submission}/review', [TaskController::class, 'reviewTask']);
-//
-//        Route::get('submissions/{submission}', [TaskController::class, 'getDetailsSubmission']);
-//
-//
-//        Route::get('/count', [TaskController::class, 'totalTasks']); // إجمالي المهام
-//        Route::get('/list', [TaskController::class, 'taskShowInList']);
-//
-//    });
-//    Route::get('/{task}/submissions', [TaskController::class, 'getSubmissions']); #->middleware('can:get-task-submissions');         // إجابات Task معين
-//
-////    Route::patch('/submissions/{submission}/approve', [TaskController::class, 'approveSubmission'])->middleware('can:task-approve'); // يعتمد
-////    Route::post('/submissions/{submission}/reject', [TaskController::class, 'rejectSubmission'])->middleware('can:task-reject');   // يرفض
-//});
 use App\Http\Controllers\TaskController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('tasks')->group(function () {
 

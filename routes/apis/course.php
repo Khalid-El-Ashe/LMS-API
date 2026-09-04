@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('course')->group(function () {
+    Route::get('/list', [CourseController::class, 'index']);
+
     Route::get('all-course', [CourseController::class, 'getAllCourses']);
     Route::get('count', [CourseController::class, 'getAllCoursesCount']);
 

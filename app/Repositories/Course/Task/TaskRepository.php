@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 
 interface TaskRepository
 {
-    public function create(array $data, Mentor $mentor);
+    public function createTask(array $data, Mentor $mentor);
 
-    public function getByCourse(int $courseId);
+    public function getTaskByCourse(int $courseId);
 
-    public function getByVideo(int $videoId);
+    public function getTaskByVideo(int $videoId);
 
     public function update(int $id, array $data);
 

@@ -28,7 +28,7 @@ class TaskController extends Controller
 
             $data = $request->validated();
             $mentor = auth()->guard('mentor')->user();
-            $task = $this->taskRepo->create(data: $data, mentor: $mentor);
+            $task = $this->taskRepo->createTask(data: $data, mentor: $mentor);
 
             return $this->success($task, 'Task created successfully', 201);
         } catch (Throwable $th) {

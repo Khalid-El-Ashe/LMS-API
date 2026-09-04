@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TaskModelRepository implements TaskRepository
 {
 
-    public function create(array $data, Mentor $mentor)
+    public function createTask(array $data, Mentor $mentor)
     {
 //        $mentor = auth()->guard('mentor')->user();
 
@@ -34,7 +34,7 @@ class TaskModelRepository implements TaskRepository
         return Task::query()->create($data);
     }
 
-    public function getByCourse(int $courseId)
+    public function getTaskByCourse(int $courseId)
     {
         return Task::query()
             ->where('course_id', $courseId)
@@ -42,7 +42,7 @@ class TaskModelRepository implements TaskRepository
             ->get();
     }
 
-    public function getByVideo(int $videoId)
+    public function getTaskByVideo(int $videoId)
     {
         return Task::query()->where('video_id', $videoId)->orderBy('tasks.order')->get();
     }
@@ -237,6 +237,22 @@ class TaskModelRepository implements TaskRepository
             ])
             ->with([
                 'video:id,title',
+                'submissions' => function ($query) {
+                    $query->select([
+                        'id',
+                        'task_id',
+                        'student_id',
+                        'file',
+                        'grade',
+                        'review_notes',
+                        'reviewed_by',
+                        'reviewed_at',
+                        'created_at',
+                    ])->with([
+                        'student:id,full_name,profile_image',
+                        'reviewer:id,name',
+                    ]);
+                },
             ])
             ->findOrFail($task->id);
     }

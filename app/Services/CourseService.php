@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Resources\Course\CourseVideosResource;
-use App\Http\Resources\Course\VideoResource;
 use App\Jobs\FetchPlaylistVideosJob;
 use App\Models\CourseVideo;
 use App\Repositories\Course\CourseRepository;
@@ -16,14 +15,8 @@ class CourseService
     // This service can be used to handle business logic related to courses
     // For example, we can have methods to calculate course ratings, handle course enrollments, etc.
 
-    protected $courseRepo;
-    protected $youtubeService;
 
-    public function __construct(CourseRepository $courseRepo, YoutubeService $youtubeService)
-    {
-        $this->courseRepo = $courseRepo;
-        $this->youtubeService = $youtubeService;
-    }
+    public function __construct(private readonly CourseRepository $courseRepo) {}
 
     /**
      * @throws Throwable
@@ -64,10 +57,10 @@ class CourseService
                     $data['youtube_playlist_url']
                 );
 
-//                FetchPlaylistVideosJob::dispatchSync(
-//                    $course->id,
-//                    $playlistId
-//                )->afterCommit();
+                //                FetchPlaylistVideosJob::dispatchSync(
+                //                    $course->id,
+                //                    $playlistId
+                //                )->afterCommit();
                 FetchPlaylistVideosJob::dispatchSync(
                     $course->id,
                     $playlistId

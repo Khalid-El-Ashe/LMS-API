@@ -41,6 +41,7 @@ return [
 
     'debug' => (bool)env('APP_DEBUG', false),
 
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -71,7 +72,7 @@ return [
      * YOUTUBE API KEY
      * This key is used to authenticate requests to the YouTube Data API, allowing the application to access and retrieve data from YouTube, such as video details, playlists, and other related information. By storing the API key in the environment file, it ensures that sensitive information is not hard-coded into the application and can be easily managed across different environments (development, staging, production).
      */
-    'youtube_api_key' => env('YOUTUBE_API_KEY'),
+    'youtube_api_key' => env('YOUTUBE_API_KEY', 'AIzaSyBLnNYxA6k4zTbZVqBO4DfA5ILpcv1R91U'),
 
     /**
      *
